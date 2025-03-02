@@ -30,7 +30,7 @@ export default {
   methods: {
     async axiosSearch() {
       try {
-        const response = await getRequest('/search', { q: this.query })
+        const response = await getRequest('/search/product', { q: this.query })
         // 응답 구조에 따라 결과 할당 (필요 시 수정)
         this.results = response.data.results || response.data
       } catch (err) {

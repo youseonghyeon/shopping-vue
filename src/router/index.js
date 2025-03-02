@@ -35,7 +35,12 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: Login
+        component: () => import('@/views/Login.vue') // 위치에 맞게 경로 조정
+    },
+    {
+        path: '/product/:id',
+        name: 'ProductDetail',
+        component: () => import('@/views/ProductDetail.vue') // 위치에 맞게 경로 조정
     }
 ]
 const router = createRouter({

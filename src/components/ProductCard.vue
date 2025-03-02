@@ -1,5 +1,5 @@
 <template>
-  <div class="product-card">
+  <div class="product-card" @click="goToProductDetail">
     <img :src="product.image" alt="상품 이미지" />
     <div class="product-info">
       <h2>{{ product.name }}</h2>
@@ -15,6 +15,11 @@ export default {
     product: {
       type: Object,
       required: true
+    }
+  },
+  methods: {
+    goToProductDetail() {
+      this.$router.push({ name: "ProductDetail", params: { id: this.product.id } });
     }
   }
 }
