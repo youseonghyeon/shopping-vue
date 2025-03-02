@@ -1,9 +1,9 @@
 <template>
   <div class="product-card" @click="goToProductDetail">
-    <img :src="product.image" alt="상품 이미지" />
+    <img :src="product.titleImage" alt="상품 이미지" />
     <div class="product-info">
       <h2>{{ product.name }}</h2>
-      <p>{{ product.price }}</p>
+      <p>{{ formatPrice(product.price) }}</p>
     </div>
   </div>
 </template>
@@ -20,6 +20,11 @@ export default {
   methods: {
     goToProductDetail() {
       this.$router.push({ name: "ProductDetail", params: { id: this.product.id } });
+    },
+    formatPrice(value) {
+      // 숫자로 변환 후 toLocaleString을 사용하여 천단위 콤마 추가, 뒤에 "원" 추가
+      const number = Number(value);
+      return number.toLocaleString() + '원';
     }
   }
 }

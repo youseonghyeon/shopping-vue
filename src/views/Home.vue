@@ -1,7 +1,22 @@
 <template>
   <div class="container">
-    <HeaderComponent/>
-    <Banner/>
+    <HeaderComponent />
+    <Banner />
+
+    <!-- 가격 정렬 버튼 영역 -->
+    <div class="sort-buttons">
+      <button
+          @click="changeSort('asc')"
+          :class="{ active: sortOrder === 'asc' }">
+        Price Ascending
+      </button>
+      <button
+          @click="changeSort('desc')"
+          :class="{ active: sortOrder === 'desc' }">
+        Price Descending
+      </button>
+    </div>
+
     <section class="product-list">
       <ProductCard
           v-for="(product, index) in products"
@@ -9,7 +24,9 @@
           :product="product"
       />
     </section>
-    <BottomNav/>
+    <!-- 무한 스크롤 트리거 엘리먼트 -->
+    <div ref="infiniteScrollTrigger"></div>
+    <BottomNav />
   </div>
 </template>
 
@@ -18,6 +35,7 @@ import HeaderComponent from '../components/Header.vue'
 import Banner from '../components/Banner.vue'
 import ProductCard from '../components/ProductCard.vue'
 import BottomNav from '../components/BottomNav.vue'
+import { getRequest } from "@/api/http.js";
 
 export default {
   name: 'Home',
@@ -29,45 +47,69 @@ export default {
   },
   data() {
     return {
-      products: [
-        {
-          id: 1,
-          name: "Apple 2024 맥북 프로 14 M4",
-          price: "2,237,930원",
-          image: "https://thumbnail8.coupangcdn.com/thumbnails/remote/320x320ex/image/1025_amir_coupang_oct_80k/eb38/aa9d608f2d516bc2ac5dc44a5d07cadaebe11e58409cfd02eea64e1e3d32.jpg"
-        },
-        {
-          id: 2,
-          name: "Apple 2024 맥북 프로 14 M4",
-          price: "3,482,300원",
-          image: "https://thumbnail9.coupangcdn.com/thumbnails/remote/320x320ex/image/retail/images/2024/11/08/13/4/d01c4dd5-5da1-4fb6-a042-8c2002e8fa6e.jpg"
-        },
-        {
-          id: 3,
-          name: "Apple 2024 맥북 에어 13 M3",
-          price: "1,268,000원",
-          image: "https://thumbnail10.coupangcdn.com/thumbnails/remote/320x320ex/image/retail/images/2024/11/04/16/0/ee63c2ec-17c7-447d-8a9a-9e4dea58ac76.jpeg"
-        },
-        {
-          id: 4,
-          name: "Apple 맥북 에어 13 M2",
-          price: "40,000원",
-          image: "https://thumbnail7.coupangcdn.com/thumbnails/remote/320x320ex/image/retail/images/2024/11/06/13/6/1affc1cc-67bd-42a5-8ea9-f2be0db7c09d.jpeg"
-        },
-        {
-          id: 5,
-          name: "다루미 맥북에어 그램 스탠드 가방, 블랙, 1개",
-          price: "13,500원",
-          image: "https://thumbnail8.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/154081775986418-030eb1bf-4bd3-499f-9201-3608f4418928.jpg"
-        },
-        {
-          id: 6,
-          name: "UGREEN 유그린 1000Mbps USB C 이더넷 어댑터 10Gbps USB3.2 Gen2 5 in 1 USB C 허브 노트북 맥북 윈도우 XPS 아이패드 프로 이더넷 연결용",
-          price: "25,300원",
-          image: "https://image6.coupangcdn.com/image/vendor_inventory/e154/b8bd63cdafc623daccde4ae1c0bb686570fec8e2c530bc597857ba5915b3.jpg"
-        }
+      products: [],
+      page: 0,
+      totalPages: 1,
+      isLoading: false,
+      sortOrder: 'asc', // 기본 정렬: 오름차순
+      scrollThreshold: 300 // 필요에 따라 사용 (Intersection Observer에서는 미사용)
+    }
+  },
+  mounted() {
+    this.fetchProducts(0);
+    this.initIntersectionObserver();
+  },
+  beforeDestroy() {
+    // Intersection Observer 해제 (Vue 2: beforeDestroy, Vue 3: unmounted)
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  },
+  methods: {
+    async fetchProducts(page = 0) {
+      if (this.isLoading) return;
+      this.isLoading = true;
+      try {
+        // API 요청 시 sort 파라미터 추가 (예: sort=price,asc 또는 sort=price,desc)
+        const response = await getRequest("/products", { page: page, size: 10, sort: `price,${this.sortOrder}` });
+        const data = response.data;
+        // 첫 페이지이면 데이터를 초기화, 그렇지 않으면 기존 데이터에 추가
+        this.products = page === 0 ? data.content : this.products.concat(data.content);
+        this.page = data.number;
+        this.totalPages = data.totalPages;
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    changeSort(order) {
+      if (this.sortOrder === order) return;
+      this.sortOrder = order;
+      // 정렬 변경 시 기존 데이터 초기화 후 첫 페이지부터 다시 불러옴
+      this.page = 0;
+      this.totalPages = 1;
+      this.products = [];
+      this.fetchProducts(0);
+    },
+    initIntersectionObserver() {
+      const options = {
+        root: null, // 브라우저 뷰포트를 기준으로
+        rootMargin: '0px',
+        threshold: 0.1 // 10% 보일 때 trigger
+      };
 
-      ]
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && this.page < this.totalPages - 1 && !this.isLoading) {
+            this.fetchProducts(this.page + 1);
+          }
+        });
+      }, options);
+
+      if (this.$refs.infiniteScrollTrigger) {
+        this.observer.observe(this.$refs.infiniteScrollTrigger);
+      }
     }
   }
 }
@@ -79,13 +121,37 @@ export default {
   padding-bottom: 60px; /* 하단 고정 네비게이션 높이만큼 여백 추가 */
 }
 
-.product-list {
+.sort-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  gap: 10px;
+}
 
+.sort-buttons button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.sort-buttons button.active {
+  border-color: #007bff;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.product-list {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: space-between;
-  padding: 10px 10px;
+  padding: 10px;
+}
+
+/* 무한 스크롤 트리거는 보이지 않게 처리 */
+[infinite-scroll-trigger] {
+  height: 1px;
 }
 </style>
