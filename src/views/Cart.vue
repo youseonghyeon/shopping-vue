@@ -13,15 +13,18 @@
       </ul>
       <p v-if="cartItems.length === 0">장바구니가 비어 있습니다.</p>
     </div>
+    <BottomNav />
   </div>
 </template>
 
 <script>
 import HeaderComponent from '../components/Header.vue'
+import BottomNav from "@/components/BottomNav.vue";
 
 export default {
   name: 'Cart',
   components: {
+    BottomNav,
     HeaderComponent
   },
   data() {

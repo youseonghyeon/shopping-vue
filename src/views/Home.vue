@@ -2,7 +2,6 @@
   <div class="container">
     <HeaderComponent />
     <Banner />
-
     <!-- 가격 정렬 버튼 영역 -->
     <div class="sort-buttons">
       <button

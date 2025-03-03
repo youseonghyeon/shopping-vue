@@ -35,13 +35,6 @@ export default {
   border-bottom: 1px solid #e0e0e0;
 }
 
-.logo {
-  font-size: 1.6em;
-  font-weight: bold;
-  font-family: "Times New Roman";
-  color: #333333;
-}
-
 .hamburger-button {
   background: none;
   border: none;

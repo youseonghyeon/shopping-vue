@@ -1,6 +1,7 @@
 <template>
   <div class="login-page">
     <div class="login-container">
+      <h1 class="logo" @click="goMain()">MyShoppingmall</h1>
       <h1>로그인</h1>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
@@ -33,8 +34,10 @@
 </template>
 
 <script>
-import http, {postRequest} from "@/api/http.js";
-import VueCookies, {set} from "vue-cookies";
+import http from "@/api/http.js";
+import VueCookies from "vue-cookies";
+import {goMain} from "@/utils/navigation.js";
+
 
 export default {
   name: "Login",
@@ -46,19 +49,19 @@ export default {
     };
   },
   methods: {
+    goMain,
     async handleLogin() {
       try {
         const response = await http.post("/login", {
           username: this.username,
           password: this.password,
         });
-
         if (response.data.status === "success") {
           // 로그인 성공 시 쿠키에 사용자 정보 저장
           VueCookies.set("user", response.data.user, this.rememberMe ? "7d" : "1h");
           alert("로그인 성공");
-          console.log("로그인 성공", response)
-          this.$router.push("/"); // 로그인 후 이동할 페이지
+          console.log("로그인 성공", response);
+          this.$router.push("/");
         }
       } catch (error) {
         console.error("로그인 실패:", error);
@@ -66,7 +69,7 @@ export default {
       }
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -76,52 +79,63 @@ export default {
   align-items: center;
   min-height: 100vh;
   background-color: #f5f5f5;
+  padding: 20px;
 }
 
 .login-container {
   width: 100%;
   max-width: 400px;
-  padding: 20px;
-  background: #ffffff;
+  padding: 30px;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #333333;
+  font-size: 1.8em;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   display: block;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: #555555;
+  font-size: 0.95em;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
+  font-size: 1em;
   border: 1px solid #ddd;
   border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #b27d4d;
+  outline: none;
 }
 
 .options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .options .find a {
   font-size: 0.9em;
   color: #b27d4d;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
 .options .find a:hover {
@@ -135,13 +149,15 @@ h1 {
 
 .login-btn {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #b27d4d;
   color: #ffffff;
   border: none;
   border-radius: 4px;
   font-size: 1em;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .login-btn:hover {
@@ -150,12 +166,13 @@ h1 {
 
 .signup {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 
 .signup p {
   margin-bottom: 10px;
   color: #555555;
+  font-size: 0.95em;
 }
 
 .signup-btn {
@@ -167,10 +184,12 @@ h1 {
   color: #b27d4d;
   text-decoration: none;
   font-weight: bold;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .signup-btn:hover {
   background-color: #b27d4d;
   color: #ffffff;
 }
+
 </style>

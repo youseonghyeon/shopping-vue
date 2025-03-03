@@ -1,13 +1,13 @@
 <template>
-  <HeaderComponent />
   <div class="product-detail">
+    <HeaderComponent />
     <h1>{{ product.name }}</h1>
     <img :src="product.titleImage" alt="Product Image"/>
     <p>{{ product.description }}</p>
     <p class="price">가격: {{ formatPrice(product.price) }}</p>
     <button @click="addToCart">Add to Cart</button>
+    <BottomNav />
   </div>
-  <BottomNav />
 </template>
 
 <script>
