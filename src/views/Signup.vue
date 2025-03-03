@@ -83,8 +83,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import {postRequest} from "@/api/http.js";
+import router from "@/router/index.js";
 // 필요하다면 useRouter()를 import하여 회원가입 후 라우팅 처리
 // import { useRouter } from 'vue-router'
 
@@ -215,12 +216,14 @@ const handleSubmit = async () => {
     // 에러가 있으면 진행 중단
     return
   }
-
-  // 3. 검증 통과 시 가입 로직 실행
-  alert('회원가입 요청을 진행합니다.')
   try {
     let axiosResponse = await postRequest('/signup', form.value);
-    console.log(axiosResponse);
+    if (axiosResponse.data.status === 'SUCCESS') {
+      alert('회원가입 성공');
+      await router.push('/login');
+    } else {
+      alert('회원가입 실패');
+    }
   } catch (error) {
     console.error('회원가입 실패:', error);
     alert('회원가입에 실패했습니다.');
