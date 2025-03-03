@@ -1,46 +1,45 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import CategoryList from '../views/CategoryList.vue'
-import Search from '../views/Search.vue'
-import MyRoom from '../views/MyRoom.vue'
-import Cart from '../views/Cart.vue'
-import Login from '../views/Login.vue'
+import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home
+        component: () => import('@/views/Home.vue')
     },
     {
         path: '/category',
         name: 'CategoryList',
-        component: CategoryList
+        component: () => import('@/views/CategoryList.vue')
     },
     {
         path: '/search',
         name: 'Search',
-        component: Search
+        component: () => import('@/views/Search.vue')
     },
     {
         path: '/myroom',
         name: 'MyRoom',
-        component: MyRoom
+        component: () => import('@/views/MyRoom.vue')
     },
     {
         path: '/cart',
         name: 'Cart',
-        component: Cart
+        component: () => import('@/views/Cart.vue')
     },
     {
         path: '/login',
         name: 'Login',
-        component: () => import('@/views/Login.vue') // 위치에 맞게 경로 조정
+        component: () => import('@/views/Login.vue')
     },
     {
         path: '/product/:id',
         name: 'ProductDetail',
-        component: () => import('@/views/ProductDetail.vue') // 위치에 맞게 경로 조정
+        component: () => import('@/views/ProductDetail.vue')
+    },
+    {
+        path: '/signup',
+        name: 'Signup',
+        component: () => import('@/views/Signup.vue')
     }
 ]
 const router = createRouter({
