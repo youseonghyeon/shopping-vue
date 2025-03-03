@@ -2,28 +2,28 @@
   <nav class="bottom-nav">
     <ul>
       <li>
-        <a href="/search">
-          <span class="icon">🔍</span>
-          <span class="label">검색</span>
-        </a>
-      </li>
-      <li>
-        <a href="/">
-          <span class="icon">🏠</span>
+        <router-link to="/">
+          <font-awesome-icon icon="home" class="icon" />
           <span class="label">홈</span>
-        </a>
+        </router-link>
       </li>
       <li>
-        <a href="/myroom">
-          <span class="icon">👤</span>
+        <router-link to="/search">
+          <font-awesome-icon icon="search" class="icon" />
+          <span class="label">검색</span>
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/myroom">
+          <font-awesome-icon icon="user" class="icon" />
           <span class="label">마이룸</span>
-        </a>
+        </router-link>
       </li>
       <li>
-        <a href="/cart">
-          <span class="icon">🛒</span>
+        <router-link to="/cart">
+          <font-awesome-icon icon="shopping-cart" class="icon" />
           <span class="label">장바구니</span>
-        </a>
+        </router-link>
       </li>
     </ul>
   </nav>
@@ -75,5 +75,10 @@ export default {
 
 .bottom-nav .label {
   margin-top: 3px;
+}
+
+.icon {
+  color: #000;
+  font-size: 24px;
 }
 </style>

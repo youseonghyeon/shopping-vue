@@ -1,8 +1,8 @@
 <template>
   <div class="search-page">
-    <HeaderComponent />
+    <HeaderComponent/>
     <div class="search-container">
-      <input type="text" v-model="query" placeholder="검색어를 입력하세요" />
+      <input type="text" v-model="query" placeholder="검색어를 입력하세요"/>
       <button @click="axiosSearch">검색</button>
     </div>
     <div class="results">
@@ -11,16 +11,18 @@
         <li v-for="(result, index) in results" :key="index">{{ result }}</li>
       </ul>
     </div>
+    <BottomNav />
   </div>
 </template>
 
 <script>
-import { getRequest } from '../api/http'
+import {getRequest} from '../api/http'
 import HeaderComponent from '../components/Header.vue'
+import BottomNav from "@/components/BottomNav.vue";
 
 export default {
   name: 'Search',
-  components: { HeaderComponent },
+  components: {BottomNav, HeaderComponent},
   data() {
     return {
       query: '',
@@ -30,9 +32,8 @@ export default {
   methods: {
     async axiosSearch() {
       try {
-        const response = await getRequest('/search/product', { q: this.query })
-        // 응답 구조에 따라 결과 할당 (필요 시 수정)
-        this.results = response.data.results || response.data
+        const response = await getRequest('/search/products', {q: this.query})
+        this.results = response.data
       } catch (err) {
         console.error(err)
         alert(err)

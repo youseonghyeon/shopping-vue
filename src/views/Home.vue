@@ -24,17 +24,18 @@
           :product="product"
       />
     </section>
+
     <!-- 무한 스크롤 트리거 엘리먼트 -->
-    <div ref="infiniteScrollTrigger"></div>
+    <div ref="infiniteScrollTrigger" class="infinite-scroll-trigger"></div>
     <BottomNav />
   </div>
 </template>
 
 <script>
-import HeaderComponent from '../components/Header.vue'
-import Banner from '../components/Banner.vue'
-import ProductCard from '../components/ProductCard.vue'
-import BottomNav from '../components/BottomNav.vue'
+import HeaderComponent from '@/components/Header.vue'
+import Banner from '@/components/Banner.vue'
+import ProductCard from '@/components/ProductCard.vue'
+import BottomNav from '@/components/BottomNav.vue'
 import { getRequest } from "@/api/http.js";
 
 export default {
@@ -51,16 +52,18 @@ export default {
       page: 0,
       totalPages: 1,
       isLoading: false,
-      sortOrder: 'asc', // 기본 정렬: 오름차순
-      scrollThreshold: 300 // 필요에 따라 사용 (Intersection Observer에서는 미사용)
+      sortOrder: 'asc'
     }
   },
   mounted() {
     this.fetchProducts(0);
-    this.initIntersectionObserver();
+    // DOM 업데이트 후 observer 초기화
+    this.$nextTick(() => {
+      this.initIntersectionObserver();
+    });
   },
   beforeDestroy() {
-    // Intersection Observer 해제 (Vue 2: beforeDestroy, Vue 3: unmounted)
+    // Intersection Observer 해제
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -70,13 +73,13 @@ export default {
       if (this.isLoading) return;
       this.isLoading = true;
       try {
-        // API 요청 시 sort 파라미터 추가 (예: sort=price,asc 또는 sort=price,desc)
-        const response = await getRequest("/products", { page: page, size: 10, sort: `price,${this.sortOrder}` });
-        const data = response.data;
-        // 첫 페이지이면 데이터를 초기화, 그렇지 않으면 기존 데이터에 추가
-        this.products = page === 0 ? data.content : this.products.concat(data.content);
-        this.page = data.number;
-        this.totalPages = data.totalPages;
+        const params = { page, size: 10, sort: `price,${this.sortOrder}` };
+        const response = await getRequest("/products", params);
+
+        // 첫 페이지면 초기화, 이후 페이지면 기존 목록에 추가
+        this.products = page === 0 ? response.data.content : this.products.concat(response.data.content);
+        this.page = response.data.page.number;
+        this.totalPages = response.data.page.totalPages;
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -86,7 +89,7 @@ export default {
     changeSort(order) {
       if (this.sortOrder === order) return;
       this.sortOrder = order;
-      // 정렬 변경 시 기존 데이터 초기화 후 첫 페이지부터 다시 불러옴
+      // 정렬 변경 시 데이터 초기화 후 첫 페이지부터 다시 로딩
       this.page = 0;
       this.totalPages = 1;
       this.products = [];
@@ -94,12 +97,12 @@ export default {
     },
     initIntersectionObserver() {
       const options = {
-        root: null, // 브라우저 뷰포트를 기준으로
+        root: null,
         rootMargin: '0px',
-        threshold: 0.1 // 10% 보일 때 trigger
+        threshold: 0.1
       };
 
-      this.observer = new IntersectionObserver((entries) => {
+      this.observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting && this.page < this.totalPages - 1 && !this.isLoading) {
             this.fetchProducts(this.page + 1);
@@ -107,8 +110,11 @@ export default {
         });
       }, options);
 
-      if (this.$refs.infiniteScrollTrigger) {
-        this.observer.observe(this.$refs.infiniteScrollTrigger);
+      const triggerElement = this.$refs.infiniteScrollTrigger;
+      if (triggerElement) {
+        this.observer.observe(triggerElement);
+      } else {
+        console.warn("무한 스크롤 트리거 엘리먼트를 찾을 수 없습니다.");
       }
     }
   }
@@ -150,8 +156,8 @@ export default {
   padding: 10px;
 }
 
-/* 무한 스크롤 트리거는 보이지 않게 처리 */
-[infinite-scroll-trigger] {
+/* 무한 스크롤 트리거 엘리먼트 (화면에 보이지 않게) */
+.infinite-scroll-trigger {
   height: 1px;
 }
 </style>
