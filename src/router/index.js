@@ -40,6 +40,11 @@ const routes = [
         path: '/signup',
         name: 'Signup',
         component: () => import('@/views/Signup.vue')
+    },
+    {
+        path: '/find-credentials',
+        name: 'FindCredentials',
+        component: () => import('@/views/FindCredentials.vue')
     }
 ]
 const router = createRouter({
