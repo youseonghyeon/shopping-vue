@@ -28,12 +28,6 @@
       <div class="menu-item" @click="goCancelReturnExchange">취소/반품/교환목록</div>
       <div class="menu-item" @click="goReviewManagement">리뷰관리</div>
     </div>
-
-    <!-- 로그인 버튼 (로그인되지 않은 경우에만 표시 예시) -->
-    <div class="login-section" v-if="!isLoggedIn">
-      <button @click="goLogin">로그인</button>
-    </div>
-
     <!-- 하단 네비게이션 -->
     <BottomNav/>
   </div>
@@ -49,8 +43,8 @@ import {getRequest, postRequest} from '@/api/http.js'
 const router = useRouter()
 
 // 간단한 사용자 정보
-const userName = ref('유성현')
-const userPoint = ref('123,456')
+const userName = ref('')
+const userPoint = ref('')
 const isLoggedIn = ref(false)
 
 // 이동 함수들 (예시)

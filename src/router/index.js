@@ -45,6 +45,11 @@ const routes = [
         path: '/find-credentials',
         name: 'FindCredentials',
         component: () => import('@/views/FindCredentials.vue')
+    },
+    {
+        path: '/order-list',
+        name: 'OrderList',
+        component: () => import('@/views/OrderList.vue')
     }
 ]
 const router = createRouter({
