@@ -14,7 +14,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/myroom">
+        <router-link to="/mypage">
           <font-awesome-icon icon="user" class="icon" />
           <span class="label">마이룸</span>
         </router-link>

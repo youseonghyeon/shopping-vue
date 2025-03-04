@@ -17,9 +17,9 @@ const routes = [
         component: () => import('@/views/Search.vue')
     },
     {
-        path: '/myroom',
-        name: 'MyRoom',
-        component: () => import('@/views/MyRoom.vue')
+        path: '/mypage',
+        name: 'MyPage',
+        component: () => import('@/views/MyPage.vue')
     },
     {
         path: '/cart',
