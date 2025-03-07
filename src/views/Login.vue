@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import http from "@/api/http.js";
+import http, {postRequest} from "@/api/http.js";
 import VueCookies from "vue-cookies";
 import {goMain} from "@/utils/navigation.js";
 
@@ -52,15 +52,11 @@ export default {
     goMain,
     async handleLogin() {
       try {
-        const response = await http.post("/login", {
+        const response = await postRequest("/login", {
           username: this.username,
           password: this.password,
         });
         if (response.data.status === "success") {
-          // 로그인 성공 시 쿠키에 사용자 정보 저장
-          VueCookies.set("user", response.data.user, this.rememberMe ? "7d" : "1h");
-          alert("로그인 성공");
-          console.log("로그인 성공", response);
           this.$router.push("/");
         }
       } catch (error) {

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true; // 요청 시 쿠키 포함
 
-let shoppingApiUrl = 'http://192.168.0.17:9000';
+let shoppingApiUrl = '/api';
 
 const http = axios.create({
     baseURL: shoppingApiUrl,

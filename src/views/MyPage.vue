@@ -83,10 +83,10 @@ const handleLogout = async () => {
 onMounted(async () => {
   try {
     const response = await getRequest('/mypage')
-    // 예시: 로그인 여부나 사용자 정보 받아오기
-    isLoggedIn.value = true
-    userName.value = response.data.userName ?? '유성현'
-    userPoint.value = response.data.userPoint ?? '123,456'
+    const {loggedIn, point, role, username} = response.data;
+    isLoggedIn.value = loggedIn
+    userName.value = username;
+    userPoint.value = point;
   } catch (err) {
   }
 })
