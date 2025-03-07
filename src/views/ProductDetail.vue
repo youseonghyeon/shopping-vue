@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import {getRequest} from "@/api/http.js";
+import {getRequest, postRequest} from "@/api/http.js";
 import HeaderComponent from "@/components/Header.vue";
 import BottomNav from "@/components/BottomNav.vue";
 
@@ -38,9 +38,9 @@ export default {
         this.isLoading = false;
       }
     },
-    addToCart() {
-      // 실제 장바구니 로직에 맞게 수정할 수 있습니다.
-      alert(`Added ${this.product.name} to cart`);
+    async addToCart() {
+      let axiosResponse = await postRequest("/cart/create", {productId: this.product.id, quantity: 1});
+      console.log(axiosResponse)
     },
     formatPrice(value) {
       // 숫자로 변환 후 toLocaleString을 사용하여 천단위 콤마 추가, 뒤에 "원" 추가
