@@ -34,13 +34,15 @@
 </template>
 
 <script>
-import http, {postRequest} from "@/api/http.js";
-import VueCookies from "vue-cookies";
+import {postRequest} from "@/api/http.js";
 import {goMain} from "@/utils/navigation.js";
 
 
 export default {
   name: "Login",
+  created() {
+    window.scrollTo(0, 0);
+  },
   data() {
     return {
       username: "",

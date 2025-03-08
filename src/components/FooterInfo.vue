@@ -19,7 +19,7 @@
       <p>고객센터: 1500-0000</p>
       <p>이메일: epfzja1234@gmail.com</p>
       <p class="copyright">
-        &copy; Designed by GPT-o3
+        Designed by GPT-o3
       </p>
     </div>
   </div>
