@@ -1,14 +1,21 @@
-# vue-app/Dockerfile
-# 1단계: 빌드
-FROM node:16-alpine as build-stage
+FROM node:18 AS builder
 WORKDIR /app
-COPY package*.json ./
+
+COPY package.json package-lock.json ./
 RUN npm install
+
 COPY . .
+
 RUN npm run build
 
-# 2단계: Nginx를 통한 서빙
-FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-EXPOSE 80
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+
+COPY --from=builder /app/dist .
+
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 CMD ["nginx", "-g", "daemon off;"]
+
+EXPOSE 80

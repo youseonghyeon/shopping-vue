@@ -3,6 +3,28 @@
     <HeaderComponent/>
     <div class="content">
       <h2>장바구니</h2>
+
+      <!-- 전체 선택 및 선택 삭제 컨트롤 -->
+      <div class="select-controls" v-if="cartItems.length > 0">
+        <div class="select-all">
+          <input
+              type="checkbox"
+              :checked="allChecked"
+              @change="toggleSelectAll($event)"
+              id="select-all"
+          />
+          <label for="select-all">전체 선택</label>
+        </div>
+        <button
+            class="delete-selected"
+            @click="deleteSelectedItems"
+            :disabled="checkedItems.length === 0"
+        >
+          <font-awesome-icon icon="trash-alt"/>
+          선택 삭제
+        </button>
+      </div>
+
       <!-- 장바구니 항목 리스트 -->
       <ul class="cart-items">
         <li
@@ -10,48 +32,67 @@
             :key="index"
             class="cart-item"
         >
+          <!-- 개별 체크박스: 왼쪽 상단으로 위치 -->
+          <input type="checkbox" v-model="item.checked" class="item-checkbox"/>
+
           <!-- 상품 이미지 -->
           <div class="item-image">
-            <!-- 실제로는 item.imageUrl 등을 사용 -->
             <img
                 :src="item.productTitleImage"
                 alt="상품 이미지"
                 @click="goToProductDetail(item.productId)"
             />
           </div>
+
           <!-- 상품 정보 -->
           <div class="item-details">
-            <!-- 상품명 (예시로 productId를 이용해 표시) -->
             <span class="item-name" @click="goToProductDetail(item.productId)">
               {{ item.productName }}
             </span>
-
-            <!-- 원가격 (취소선) -->
             <span class="item-original-price" v-if="item.originalPrice">
-              {{ formatCurrency(item.originalPrice) }}
+              {{ formatCurrency(item.originalPrice * item.quantity) }}
             </span>
-
-            <!-- 할인율 (예: 20% )-->
             <span class="item-discount-rate" v-if="item.discountRate">
               ({{ (item.discountRate * 100).toFixed(1) }}% 할인)
             </span>
-
-            <!-- 할인된 가격 -->
             <span class="item-discounted-price" v-if="item.discountedPrice">
-              {{ formatCurrency(item.discountedPrice) }}
+              {{ formatCurrency(item.discountedPrice * item.quantity) }}
             </span>
-
-            <!-- 수량 표시 -->
+            <!-- 수량 조절 영역 -->
             <div class="item-quantity">
               <label>수량:</label>
+              <button class="quantity-btn" @click="decrementQuantity(item)">-</button>
               <span>{{ item.quantity }}</span>
+              <button class="quantity-btn" @click="incrementQuantity(item)">+</button>
             </div>
           </div>
+
+          <!-- 개별 삭제 버튼 -->
+          <button class="delete-item" @click="deleteItem(item)">
+            <font-awesome-icon icon="trash-alt"/>
+          </button>
         </li>
       </ul>
 
-      <!-- 장바구니가 비어있을 경우 메시지 표시 -->
+      <!-- 장바구니가 비어있을 경우 -->
       <p v-if="cartItems.length === 0">장바구니가 비어 있습니다.</p>
+
+      <!-- 요약 영역 -->
+      <div class="cart-summary" v-if="cartItems.length > 0">
+        <div class="summary-row">
+          <span>총 상품가격</span>
+          <span>{{ formatCurrency(totalProductPrice) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>총 배송비</span>
+          <span>{{ formatCurrency(shippingFee) }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>총 결제 예상 금액</span>
+          <span>{{ formatCurrency(totalPayment) }}</span>
+        </div>
+        <button class="purchase-button" @click="purchaseItems">구매하기</button>
+      </div>
     </div>
     <BottomNav/>
   </div>
@@ -60,49 +101,130 @@
 <script>
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import {getRequest} from "@/api/http.js";
+import { getRequest, postRequest } from "@/api/http.js"
+// FontAwesomeIcon 컴포넌트는 전역 등록하거나 아래와 같이 import 해서 사용 가능
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export default {
   name: 'Cart',
   components: {
     HeaderComponent,
-    BottomNav
+    BottomNav,
+    FontAwesomeIcon
   },
   data() {
     return {
       cartItems: [] // 장바구니 항목 리스트
     }
   },
+  computed: {
+    // 선택된 항목들
+    checkedItems() {
+      return this.cartItems.filter(item => item.checked);
+    },
+    // 전체 선택 여부
+    allChecked() {
+      return this.cartItems.length > 0 && this.cartItems.every(item => item.checked);
+    },
+    // 선택된 항목의 총 상품가격 (할인 가격 우선)
+    totalProductPrice() {
+      return this.checkedItems.reduce((acc, item) => {
+        const price = item.discountedPrice || item.originalPrice || 0;
+        return acc + price * item.quantity;
+      }, 0);
+    },
+    // 선택된 항목이 있으면 배송비 3,000원, 없으면 0원
+    shippingFee() {
+      return this.checkedItems.length > 0 ? 3000 : 0;
+    },
+    totalPayment() {
+      return this.totalProductPrice + this.shippingFee;
+    }
+  },
   mounted() {
-    // 페이지가 로드되면 장바구니 데이터 호출
-    this.fetchCartItems()
+    this.fetchCartItems();
   },
   methods: {
-    // 장바구니 데이터 불러오기
     async fetchCartItems() {
       try {
         let response = await getRequest('/cart');
-        this.cartItems = response.data;
+        // 각 항목에 checked 초기값 추가
+        this.cartItems = response.data.map(item => ({
+          ...item,
+          checked: false
+        }));
       } catch (e) {
         if (e.status === 403) {
           alert('로그인이 필요합니다.');
-          this.$router.push({name: 'Login'});
+          this.$router.push({ name: 'Login' });
         } else {
-          console.log(e)
+          console.log(e);
         }
       }
     },
-    // 통화 형식으로 포맷 (원화 기준)
     formatCurrency(value) {
-      if (!value) return ''
       return new Intl.NumberFormat('ko-KR', {
-        style: 'currency',
-        currency: 'KRW'
-      }).format(value)
+        maximumFractionDigits: 0
+      }).format(value) + '원';
     },
     goToProductDetail(productId) {
-      this.$router.push({name: "ProductDetail", params: {id: productId}});
+      this.$router.push({ name: "ProductDetail", params: { id: productId } });
     },
+    toggleSelectAll(event) {
+      const checked = event.target.checked;
+      this.cartItems.forEach(item => {
+        item.checked = checked;
+      });
+    },
+    async deleteSelectedItems() {
+      if (this.checkedItems.length === 0) {
+        alert("삭제할 항목을 선택해 주세요.");
+        return;
+      }
+      if (confirm("선택한 항목을 삭제하시겠습니까?")) {
+        let checkedProductIds = this.cartItems.filter(item => item.checked).map(item => item.productId);
+        console.log(checkedProductIds);
+        let response = await postRequest('/cart/delete', { productIds: checkedProductIds });
+        alert(response.data.message);
+        this.cartItems = this.cartItems.filter(item => !item.checked);
+      }
+    },
+    deleteItem(itemToDelete) {
+      if (confirm("이 항목을 삭제하시겠습니까?")) {
+        this.cartItems = this.cartItems.filter(item => item !== itemToDelete);
+      }
+    },
+    async incrementQuantity(item) {
+      const newQuantity = item.quantity + 1;
+      try {
+        // 수량 업데이트 post 요청
+        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
+        item.quantity = newQuantity;
+      } catch (e) {
+        console.log(e);
+        alert("수량 업데이트에 실패했습니다.");
+      }
+    },
+    async decrementQuantity(item) {
+      if (item.quantity <= 1) return; // 수량이 1 이하로 내려가지 않도록 함.
+      const newQuantity = item.quantity - 1;
+      try {
+        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
+        item.quantity = newQuantity;
+      } catch (e) {
+        console.log(e);
+        alert("수량 업데이트에 실패했습니다.");
+      }
+    },
+    purchaseItems() {
+      if (this.checkedItems.length === 0) {
+        alert("구매할 항목을 선택해 주세요.");
+        return;
+      }
+      // 선택된 항목으로 구매 진행 (예: 결제 페이지 이동)
+      alert("선택한 항목으로 구매를 진행합니다.");
+      // 구매 로직 추가 예: this.$router.push({ name: 'Checkout', params: { items: this.checkedItems } })
+    }
   }
 }
 </script>
@@ -125,6 +247,40 @@ export default {
   color: #333;
 }
 
+/* 전체 선택 및 삭제 컨트롤 */
+.select-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.select-all {
+  display: flex;
+  align-items: center;
+}
+
+.select-all input[type="checkbox"] {
+  accent-color: #b27d4d;
+  margin-right: 8px;
+}
+
+.delete-selected {
+  background: none;
+  border: none;
+  color: #b27d4d;
+  font-size: 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.delete-selected:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 장바구니 항목 */
 .cart-items {
   list-style: none;
   padding: 0;
@@ -132,12 +288,20 @@ export default {
 
 .cart-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 10px;
   border-radius: 4px;
   background-color: #ffffff;
   padding: 15px;
   border: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.item-checkbox {
+  accent-color: #b27d4d;
+  align-self: flex-start;
+  margin-top: 5px;
+  margin-right: 10px;
 }
 
 .item-image img {
@@ -179,5 +343,81 @@ export default {
 .item-quantity {
   margin-top: 10px;
   color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.item-quantity label {
+  margin-right: 8px;
+}
+
+.quantity-btn {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #333;
+  font-size: 1em;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* 개별 삭제 버튼 */
+.delete-item {
+  background: none;
+  border: none;
+  color: #b27d4d;
+  font-size: 1.2em;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* 장바구니 요약 영역 */
+.cart-summary {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.summary-row.total {
+  font-weight: bold;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 10px;
+}
+
+.purchase-button {
+  display: block;
+  width: 100%;
+  background-color: #b27d4d;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.purchase-button:hover {
+  opacity: 0.9;
 }
 </style>
