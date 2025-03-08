@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs';
 
 axios.defaults.withCredentials = true; // 요청 시 쿠키 포함
 
@@ -11,7 +12,10 @@ const http = axios.create({
 })
 
 export const getRequest = async (url, params = {}) => {
-    let response = await http.get(url, { params });
+    let response = await http.get(url, {
+        params,
+        paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})
+    });
     let data = response.data;
     return {
         status: data.status,

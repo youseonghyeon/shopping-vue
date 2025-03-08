@@ -101,9 +101,9 @@
 <script>
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import { getRequest, postRequest } from "@/api/http.js"
+import {getRequest, postRequest} from "@/api/http.js"
 // FontAwesomeIcon 컴포넌트는 전역 등록하거나 아래와 같이 import 해서 사용 가능
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 export default {
   name: 'Cart',
@@ -156,7 +156,7 @@ export default {
       } catch (e) {
         if (e.status === 403) {
           alert('로그인이 필요합니다.');
-          this.$router.push({ name: 'Login' });
+          this.$router.push({name: 'Login'});
         } else {
           console.log(e);
         }
@@ -168,7 +168,7 @@ export default {
       }).format(value) + '원';
     },
     goToProductDetail(productId) {
-      this.$router.push({ name: "ProductDetail", params: { id: productId } });
+      this.$router.push({name: "ProductDetail", params: {id: productId}});
     },
     toggleSelectAll(event) {
       const checked = event.target.checked;
@@ -184,7 +184,7 @@ export default {
       if (confirm("선택한 항목을 삭제하시겠습니까?")) {
         let checkedProductIds = this.cartItems.filter(item => item.checked).map(item => item.productId);
         console.log(checkedProductIds);
-        let response = await postRequest('/cart/delete', { productIds: checkedProductIds });
+        let response = await postRequest('/cart/delete', {productIds: checkedProductIds});
         alert(response.data.message);
         this.cartItems = this.cartItems.filter(item => !item.checked);
       }
@@ -198,7 +198,7 @@ export default {
       const newQuantity = item.quantity + 1;
       try {
         // 수량 업데이트 post 요청
-        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
+        await postRequest('/cart/update', {productId: item.productId, quantity: newQuantity});
         item.quantity = newQuantity;
       } catch (e) {
         console.log(e);
@@ -209,7 +209,7 @@ export default {
       if (item.quantity <= 1) return; // 수량이 1 이하로 내려가지 않도록 함.
       const newQuantity = item.quantity - 1;
       try {
-        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
+        await postRequest('/cart/update', {productId: item.productId, quantity: newQuantity});
         item.quantity = newQuantity;
       } catch (e) {
         console.log(e);
@@ -221,9 +221,11 @@ export default {
         alert("구매할 항목을 선택해 주세요.");
         return;
       }
-      // 선택된 항목으로 구매 진행 (예: 결제 페이지 이동)
       alert("선택한 항목으로 구매를 진행합니다.");
-      // 구매 로직 추가 예: this.$router.push({ name: 'Checkout', params: { items: this.checkedItems } })
+      const queryStr = this.checkedItems
+          .map(item => `${item.productId}-${item.quantity}`)
+          .join(',');
+      this.$router.push({name: 'Checkout', query: {items: queryStr}})
     }
   }
 }
