@@ -243,7 +243,8 @@ const handleSubmit = async () => {
 
   try {
     const axiosResponse = await postRequest('/signup', form.value)
-    if (axiosResponse.data.status === 'SUCCESS') {
+    console.log('회원가입 결과:', axiosResponse.data)
+    if (axiosResponse.data.success === true) {
       alert('회원가입 성공')
       await router.push('/login')
     } else {

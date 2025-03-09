@@ -1,7 +1,7 @@
 <template>
   <div class="find-account-page">
     <div class="find-container">
-      <h1>아이디/비밀번호 찾기</h1>
+      <h1>비밀번호 찾기</h1>
       <div class="tabs">
         <button :class="{ active: activeTab === 'findId' }" @click="activeTab = 'findId'">
           아이디 찾기

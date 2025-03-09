@@ -5,8 +5,8 @@
       <h1>로그인</h1>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">아이디</label>
-          <input type="text" id="username" v-model="username" placeholder="아이디 입력" required>
+          <label for="email">이메일</label>
+          <input type="text" id="email" v-model="email" placeholder="이메일 입력" required>
         </div>
         <div class="form-group">
           <label for="password">비밀번호</label>
@@ -14,7 +14,7 @@
         </div>
         <div class="options">
           <div class="find">
-            <a href="/find-credentials">아이디/비밀번호 찾기</a>
+            <a href="/find-credentials">비밀번호 찾기</a>
           </div>
           <div class="remember">
             <label>
@@ -45,7 +45,7 @@ export default {
   },
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
       rememberMe: false,
     };
@@ -55,7 +55,7 @@ export default {
     async handleLogin() {
       try {
         const response = await postRequest("/login", {
-          username: this.username,
+          email: this.email,
           password: this.password,
         });
         if (response.data.status === "success") {
