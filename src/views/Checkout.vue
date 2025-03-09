@@ -1,16 +1,12 @@
 <template>
   <div class="checkout-page">
-    <HeaderComponent title="주문 확인" />
+    <HeaderComponent title="주문 확인"/>
     <div class="content">
       <h2>주문 상품 목록</h2>
       <!-- 주문 상품 목록 -->
       <div class="order-items">
-        <div
-            v-for="(item, index) in detailedItems"
-            :key="index"
-            class="order-item"
-        >
-          <img :src="item.titleImage" alt="상품 이미지" />
+        <div v-for="(item, index) in detailedItems" :key="index" class="order-item">
+          <img :src="item.titleImage" alt="상품 이미지"/>
           <div class="item-info">
             <h3>{{ item.name }}</h3>
             <p>수량: {{ item.quantity }}</p>
@@ -34,30 +30,28 @@
           <span>총 할인 금액</span>
           <span>-{{ formatCurrency(discountSum) }}</span>
         </div>
-
         <!-- 포인트 사용 영역 -->
         <div class="summary-row points">
           <span>포인트 사용</span>
           <div class="points-input">
-            <!-- 첫 줄: 입력 & 전액사용 버튼 -->
+            <!-- 입력 및 전액사용 버튼 -->
             <div class="input-row">
               <input
                   type="number"
                   min="0"
-                  :max="availablePoints"
+                  :max="maxUsablePoints"
                   v-model.number="usedPoints"
               />
               <button type="button" @click="useAllPoints">전액사용</button>
             </div>
-            <!-- 둘째 줄: 잔여 포인트 -->
+            <!-- 잔여 포인트 표시 -->
             <div class="remaining-row">
               <span class="remaining-points">
-                잔여: {{ formatCurrency(remainingPoints) }}
+                잔여: {{ formatCurrency(availablePoints - usedPoints) }}
               </span>
             </div>
           </div>
         </div>
-
         <div class="summary-row total">
           <span>총 결제 예상 금액</span>
           <span>{{ formatCurrency(totalPayment) }}</span>
@@ -70,30 +64,21 @@
         <form @submit.prevent="submitOrder">
           <div class="form-group">
             <label for="recipientName">수령인</label>
-            <input
-                id="recipientName"
-                v-model="shippingInfo.recipientName"
-                required
-            />
+            <input id="recipientName" v-model="shippingInfo.recipientName" required/>
           </div>
-
           <!-- 주소 검색 버튼 -->
           <div class="form-group address-search">
             <label>주소 검색</label>
-            <button type="button" @click="openAddressSearch">
-              우편번호 검색
-            </button>
+            <button type="button" @click="openAddressSearch">우편번호 검색</button>
           </div>
-
           <div class="form-group">
-            <input id="address" v-model="shippingInfo.address" required />
+            <input id="address" v-model="shippingInfo.address" required/>
           </div>
           <div class="form-group">
             <label for="phone">연락처</label>
-            <input id="phone" v-model="shippingInfo.phone" required />
+            <input id="phone" v-model="shippingInfo.phone" required/>
           </div>
-
-          <!-- 배송 요청사항 (Select + 직접 입력) -->
+          <!-- 배송 요청사항 -->
           <div class="form-group">
             <label>배송 요청사항</label>
             <select v-model="selectedDeliveryRequest">
@@ -110,8 +95,7 @@
               />
             </div>
           </div>
-
-          <!-- 결제 수단 (텍스트 토글 버튼 스타일) -->
+          <!-- 결제 수단 (토글 버튼 스타일) -->
           <div class="form-group payment-method">
             <label>결제 수단</label>
             <div class="toggle-group">
@@ -138,57 +122,51 @@
               </div>
             </div>
           </div>
-
-          <!-- (선택) 쿠폰 코드 입력 -->
+          <!-- 쿠폰 코드 (선택) -->
           <div class="form-group">
             <label for="couponCode">쿠폰 코드 (선택)</label>
-            <input id="couponCode" v-model="couponCode" placeholder="쿠폰 코드 입력" />
+            <input id="couponCode" v-model="couponCode" placeholder="쿠폰 코드 입력"/>
           </div>
-
           <!-- 하단 안내 문구 -->
           <div class="order-notice">
             <p>
-              회원 본인은 주문 내용을 확인 하였으며,
-              구매조건/결제대행 서비스, 개인정보 제3자 제공 및 결제에 동의합니다.
+              회원 본인은 주문 내용을 확인 하였으며, 구매조건/결제대행 서비스, 개인정보 제3자 제공 및 결제에 동의합니다.
               오픈마켓 상품의 경우, 통신판매중개자로서 상품 등에 대한 책임을 지지 않습니다.
             </p>
             <p>
-              해외배송 상품의 경우 고객님의 귀책으로 통관이 지연 또는 불발될 경우
-              그 책임을 부담하실 수 있습니다.
+              해외배송 상품의 경우 고객님의 귀책으로 통관이 지연 또는 불발될 경우 그 책임을 부담하실 수 있습니다.
             </p>
           </div>
-
           <!-- 결제하기 버튼 -->
           <button type="submit" class="submit-button">결제하기</button>
         </form>
       </div>
     </div>
-    <BottomNav />
+    <BottomNav/>
   </div>
 </template>
 
 <script>
 import HeaderComponent from "@/components/Header.vue";
 import BottomNav from "@/components/BottomNav.vue";
-import { getRequest, postRequest } from "@/api/http.js";
+import {getRequest, postRequest} from "@/api/http.js";
 
 export default {
   name: "Checkout",
-  components: { HeaderComponent, BottomNav },
+  components: {HeaderComponent, BottomNav},
   data() {
     return {
-      // 전달받은 선택된 항목
+      // 선택된 항목, 상품 상세 정보
       selectedItems: [],
-      // 상품 상세 정보 + 할인 가격 등
       detailedItems: [],
-      // 계산용
+      // 가격 계산
       originalTotalPrice: 0, // 할인 전 총합
-      totalProductPrice: 0,  // 할인 후 총합
+      totalProductPrice: 0,  // 할인 후 총합 (최대 포인트 사용 가능 금액)
       discountSum: 0,        // 총 할인 금액
       shippingFee: 0,
       totalPayment: 0,
-      // 포인트 사용
-      availablePoints: 5000, // 예시: 보유 포인트
+      // 포인트 사용 관련
+      availablePoints: 0,
       usedPoints: 0,
       // 배송 정보
       shippingInfo: {
@@ -200,13 +178,16 @@ export default {
       selectedDeliveryRequest: "문앞에 놓아주세요",
       customDeliveryRequest: "",
       // 결제 수단
-      paymentMethod: "bank", // 기본값
-      // (선택) 쿠폰 코드
+      paymentMethod: "bank",
+      // 쿠폰 코드 (선택)
       couponCode: ""
     };
   },
   computed: {
-    // 잔여 포인트
+    // 최대 사용 가능한 포인트: 할인 후 상품 금액
+    maxUsablePoints() {
+      return Math.min(this.totalProductPrice, this.availablePoints);
+    },
     remainingPoints() {
       const remain = this.availablePoints - this.usedPoints;
       return remain < 0 ? 0 : remain;
@@ -214,16 +195,16 @@ export default {
   },
   created() {
     this.loadSelectedItems();
+    this.loadPoints();
   },
   methods: {
     loadSelectedItems() {
       const itemsQuery = this.$route.query.items;
       if (itemsQuery) {
-        const selectedItems = itemsQuery.split(",").map((pair) => {
+        this.selectedItems = itemsQuery.split(",").map((pair) => {
           const [id, quantity] = pair.split("-");
-          return { productId: Number(id), quantity: Number(quantity) };
+          return {productId: Number(id), quantity: Number(quantity)};
         });
-        this.selectedItems = selectedItems;
         this.fetchProductDetails();
       } else {
         alert("구매할 항목이 없습니다.");
@@ -233,20 +214,15 @@ export default {
     async fetchProductDetails() {
       try {
         const productIds = this.selectedItems.map((item) => item.productId);
-        const response = await getRequest("/products/details", {
-          productIds: productIds,
-        });
-        // 샘플 할인율 (10% 할인)
+        const response = await getRequest("/products/details", {productIds});
+        // 할인 적용 없이 단순히 가격을 사용 (배송비 제외)
         this.detailedItems = response.data.map((product) => {
-          const selected = this.selectedItems.find(
-              (item) => item.productId === product.id
-          );
-          const price = Number(product.price);
-          const discountedPrice = price;
+          const selected = this.selectedItems.find((item) => item.productId === product.id);
           return {
             ...product,
             quantity: selected ? selected.quantity : 0,
-            discountedPrice
+            // 할인된 가격이 없으면 원래 가격 사용
+            discountedPrice: product.discountedPrice || product.price
           };
         });
         this.calculateTotals();
@@ -254,29 +230,36 @@ export default {
         console.error("상품 상세 정보 불러오기 실패:", error);
       }
     },
+    async loadPoints() {
+      try {
+        const response = await getRequest("/me", {});
+        this.availablePoints = response.data.points;
+      } catch (error) {
+        console.error("포인트 정보 로드 실패:", error);
+      }
+    },
     calculateTotals() {
-      // 원래 가격(할인 전) 총합
+      // 할인 전 총합
       this.originalTotalPrice = this.detailedItems.reduce((sum, item) => {
         return sum + item.price * item.quantity;
       }, 0);
-      // 할인된 가격 총합
+      // 할인 후 총합 (포인트 사용 한도)
       this.totalProductPrice = this.detailedItems.reduce((sum, item) => {
         return sum + item.discountedPrice * item.quantity;
       }, 0);
-      // 총 할인 금액 (원래 총합 - 할인 후 총합)
+      // 총 할인 금액
       this.discountSum = this.originalTotalPrice - this.totalProductPrice;
       // 배송비
       this.shippingFee = this.detailedItems.length > 0 ? 3000 : 0;
-      // 포인트 사용 로직
-      const discountedByPoints = Math.max(this.totalProductPrice - this.usedPoints, 0);
-      // 최종 결제 금액 = (할인 후 가격 - 포인트) + 배송비
-      this.totalPayment = discountedByPoints + this.shippingFee;
+      // 최종 결제 금액: (할인 후 상품 금액 - 사용 포인트) + 배송비
+      const payableProductAmount = Math.max(this.totalProductPrice - this.usedPoints, 0);
+      this.totalPayment = payableProductAmount + this.shippingFee;
     },
     formatCurrency(value) {
       return Number(value).toLocaleString() + "원";
     },
     useAllPoints() {
-      this.usedPoints = this.availablePoints;
+      this.usedPoints = this.maxUsablePoints;
       this.calculateTotals();
     },
     openAddressSearch() {
@@ -284,16 +267,11 @@ export default {
     },
     async submitOrder() {
       try {
-        const finalDeliveryRequest =
-            this.selectedDeliveryRequest === "기타"
-                ? this.customDeliveryRequest
-                : this.selectedDeliveryRequest;
-
+        const finalDeliveryRequest = this.selectedDeliveryRequest === "기타"
+            ? this.customDeliveryRequest
+            : this.selectedDeliveryRequest;
         const orderData = {
-          shippingInfo: {
-            ...this.shippingInfo,
-            deliveryRequest: finalDeliveryRequest
-          },
+          shippingInfo: {...this.shippingInfo, deliveryRequest: finalDeliveryRequest},
           paymentMethod: this.paymentMethod,
           usedPoints: this.usedPoints,
           items: this.detailedItems.map((item) => ({
@@ -307,12 +285,11 @@ export default {
           totalPayment: this.totalPayment,
           couponCode: this.couponCode
         };
-
         const response = await postRequest("/order/submit", orderData);
         alert("주문이 완료되었습니다!");
         this.$router.push({
           name: "OrderConfirmation",
-          params: { orderId: response.data.orderId }
+          params: {orderId: response.data.data.orderId}
         });
       } catch (error) {
         console.error("주문 제출 실패:", error);
@@ -321,7 +298,10 @@ export default {
     }
   },
   watch: {
-    usedPoints() {
+    usedPoints(newVal) {
+      if (newVal > this.maxUsablePoints) {
+        this.usedPoints = this.maxUsablePoints;
+      }
       this.calculateTotals();
     }
   }
@@ -329,6 +309,7 @@ export default {
 </script>
 
 <style scoped>
+/* (이전 스타일 코드 그대로 유지) */
 .checkout-page {
   background-color: #f5f5f5;
   min-height: 100vh;
@@ -354,15 +335,18 @@ export default {
 .order-items {
   margin-bottom: 20px;
 }
+
 .order-item {
   display: flex;
   align-items: center;
   border-bottom: 1px dashed #ddd;
   padding: 15px 0;
 }
+
 .order-item:last-child {
   border-bottom: none;
 }
+
 .order-item img {
   width: 80px;
   height: 80px;
@@ -370,15 +354,18 @@ export default {
   border-radius: 4px;
   margin-right: 15px;
 }
+
 .item-info {
   flex: 1;
 }
+
 .item-info h3 {
   margin: 0 0 5px 0;
   font-size: 1em;
   color: #333;
   font-weight: bold;
 }
+
 .item-info p {
   margin: 3px 0;
   font-size: 0.9em;
@@ -392,6 +379,7 @@ export default {
   border-radius: 4px;
   border: 1px solid #eee;
 }
+
 .summary-row {
   display: flex;
   justify-content: space-between;
@@ -399,28 +387,34 @@ export default {
   font-size: 0.95em;
   color: #333;
 }
+
 .summary-row.discount {
   color: #b27d4d;
 }
+
 .summary-row.points {
   align-items: flex-start;
 }
+
 .points-input {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .input-row {
   display: flex;
   gap: 6px;
   align-items: center;
 }
+
 .input-row input {
   width: 80px;
   padding: 5px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+
 .input-row button {
   padding: 5px 10px;
   border: none;
@@ -428,17 +422,21 @@ export default {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .input-row button:hover {
   background-color: #bbb;
 }
+
 .remaining-row {
   margin-left: 2px;
   text-align: right;
 }
+
 .remaining-points {
   color: #999;
   font-size: 0.85em;
 }
+
 .summary-row.total {
   font-weight: bold;
   font-size: 1.05em;
@@ -449,6 +447,7 @@ export default {
 .shipping-info {
   margin: 20px 0;
 }
+
 .shipping-info h2 {
   font-size: 1.1em;
   margin-bottom: 10px;
@@ -456,9 +455,11 @@ export default {
   border-bottom: 2px solid #b27d4d;
   padding-bottom: 5px;
 }
+
 .form-group {
   margin-bottom: 15px;
 }
+
 .form-group label {
   display: block;
   margin-bottom: 5px;
@@ -466,6 +467,7 @@ export default {
   font-size: 0.9em;
   font-weight: 500;
 }
+
 .form-group input,
 .form-group select {
   width: 100%;
@@ -473,11 +475,13 @@ export default {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+
 .address-search {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .address-search button {
   padding: 8px 12px;
   background-color: #ccc;
@@ -485,19 +489,21 @@ export default {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .address-search button:hover {
   background-color: #bbb;
 }
 
-/* 결제 수단: 토글 버튼 스타일 */
 .payment-method {
   margin-top: 15px;
 }
+
 .payment-method .toggle-group {
   display: flex;
   gap: 10px;
   margin-top: 8px;
 }
+
 .toggle-option {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -509,12 +515,14 @@ export default {
   text-align: center;
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
+
 .toggle-option.selected {
   border-color: #b27d4d;
   color: #b27d4d;
   font-weight: bold;
   background-color: #fdf8f3;
 }
+
 .toggle-option:hover {
   background-color: #f9f9f9;
 }
@@ -539,6 +547,7 @@ export default {
   font-size: 1em;
   margin-top: 15px;
 }
+
 .submit-button:hover {
   background-color: #9a633d;
 }

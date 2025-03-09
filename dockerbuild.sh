@@ -10,12 +10,12 @@ docker tag shopping-vue:x86_64 epfzja/shopping-vue:x86_64 && echo "✅ Vue 이�
 echo "🚀 Vue 이미지를 Docker Hub로 푸시 중..."
 docker push epfzja/shopping-vue:x86_64 && echo "✅ Vue 이미지가 성공적으로 푸시되었습니다!"
 
-echo "🚀 EC2 서버에서 애플리케이션 재시작..."
-ssh -i ~/shopping.pem ec2-user@3.34.140.180 << EOF
-cd /app
-docker-compose down
-docker-compose pull
-docker-compose up -d
-docker image prune -f
-EOF
+#echo "🚀 EC2 서버에서 애플리케이션 재시작..."
+#ssh -i ~/shopping.pem ec2-user@3.34.140.180 << EOF
+#cd /app
+#docker-compose down
+#docker-compose pull
+#docker-compose up -d
+#docker image prune -f
+#EOF
 echo "🎉 모든 작업이 완료되었습니다!"

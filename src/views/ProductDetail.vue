@@ -73,8 +73,8 @@ export default {
     }
   },
   created() {
-    this.fetchProduct();
     window.scrollTo(0, 0);
+    this.fetchProduct();
     // this.fetchReviews();
     this.reviews = [{
       rating: 5,

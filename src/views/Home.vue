@@ -55,6 +55,7 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0);
     this.fetchProducts(0);
     // DOM 업데이트 후 observer 초기화
     this.$nextTick(() => {

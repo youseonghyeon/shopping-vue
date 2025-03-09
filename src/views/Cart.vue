@@ -12,6 +12,7 @@
               :checked="allChecked"
               @change="toggleSelectAll($event)"
               id="select-all"
+              class="item-checkbox"
           />
           <label for="select-all">전체 선택</label>
         </div>
@@ -49,15 +50,24 @@
             <span class="item-name" @click="goToProductDetail(item.productId)">
               {{ item.productName }}
             </span>
-            <span class="item-original-price" v-if="item.originalPrice">
-              {{ formatCurrency(item.originalPrice * item.quantity) }}
-            </span>
-            <span class="item-discount-rate" v-if="item.discountRate">
-              ({{ (item.discountRate * 100).toFixed(1) }}% 할인)
-            </span>
-            <span class="item-discounted-price" v-if="item.discountedPrice">
-              {{ formatCurrency(item.discountedPrice * item.quantity) }}
-            </span>
+
+            <!-- 할인 적용 여부에 따른 가격 표시 -->
+            <div class="price-info">
+              <template v-if="item.discountRate && item.discountRate > 0">
+                <span class="item-original-price">
+                  {{ formatCurrency(item.originalPrice * item.quantity) }}
+                </span>
+                <span class="item-discounted-price">
+                  {{ formatCurrency(item.discountedPrice * item.quantity) }}
+                </span>
+              </template>
+              <template v-else>
+                <span class="item-original-price">
+                  {{ formatCurrency(item.originalPrice * item.quantity) }}
+                </span>
+              </template>
+            </div>
+
             <!-- 수량 조절 영역 -->
             <div class="item-quantity">
               <label>수량:</label>
@@ -101,16 +111,14 @@
 <script>
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import {getRequest, postRequest} from "@/api/http.js"
-// FontAwesomeIcon 컴포넌트는 전역 등록하거나 아래와 같이 import 해서 사용 가능
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+import { getRequest, postRequest } from "@/api/http.js"
+// FontAwesomeIcon는 전역 등록된 것으로 가정합니다.
 
 export default {
   name: 'Cart',
   components: {
     HeaderComponent,
-    BottomNav,
-    FontAwesomeIcon
+    BottomNav
   },
   data() {
     return {
@@ -126,10 +134,12 @@ export default {
     allChecked() {
       return this.cartItems.length > 0 && this.cartItems.every(item => item.checked);
     },
-    // 선택된 항목의 총 상품가격 (할인 가격 우선)
+    // 선택된 항목의 총 상품가격 (할인 적용 시 discountedPrice, 없으면 originalPrice)
     totalProductPrice() {
       return this.checkedItems.reduce((acc, item) => {
-        const price = item.discountedPrice || item.originalPrice || 0;
+        const price = (item.discountRate && item.discountRate > 0)
+            ? item.discountedPrice
+            : item.originalPrice || 0;
         return acc + price * item.quantity;
       }, 0);
     },
@@ -142,33 +152,33 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0);
     this.fetchCartItems();
   },
   methods: {
     async fetchCartItems() {
       try {
         let response = await getRequest('/cart');
-        // 각 항목에 checked 초기값 추가
+        // 각 항목의 checked 초기값을 true로 설정해서 자동으로 체크
         this.cartItems = response.data.map(item => ({
           ...item,
-          checked: false
+          checked: true
         }));
+        console.log(this.cartItems);
       } catch (e) {
         if (e.status === 403) {
           alert('로그인이 필요합니다.');
-          this.$router.push({name: 'Login'});
+          this.$router.push({ name: 'Login' });
         } else {
           console.log(e);
         }
       }
     },
     formatCurrency(value) {
-      return new Intl.NumberFormat('ko-KR', {
-        maximumFractionDigits: 0
-      }).format(value) + '원';
+      return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 }).format(value) + '원';
     },
     goToProductDetail(productId) {
-      this.$router.push({name: "ProductDetail", params: {id: productId}});
+      this.$router.push({ name: "ProductDetail", params: { id: productId } });
     },
     toggleSelectAll(event) {
       const checked = event.target.checked;
@@ -184,7 +194,7 @@ export default {
       if (confirm("선택한 항목을 삭제하시겠습니까?")) {
         let checkedProductIds = this.cartItems.filter(item => item.checked).map(item => item.productId);
         console.log(checkedProductIds);
-        let response = await postRequest('/cart/delete', {productIds: checkedProductIds});
+        let response = await postRequest('/cart/delete', { productIds: checkedProductIds });
         alert(response.data.message);
         this.cartItems = this.cartItems.filter(item => !item.checked);
       }
@@ -197,8 +207,7 @@ export default {
     async incrementQuantity(item) {
       const newQuantity = item.quantity + 1;
       try {
-        // 수량 업데이트 post 요청
-        await postRequest('/cart/update', {productId: item.productId, quantity: newQuantity});
+        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
         item.quantity = newQuantity;
       } catch (e) {
         console.log(e);
@@ -206,10 +215,10 @@ export default {
       }
     },
     async decrementQuantity(item) {
-      if (item.quantity <= 1) return; // 수량이 1 이하로 내려가지 않도록 함.
+      if (item.quantity <= 1) return;
       const newQuantity = item.quantity - 1;
       try {
-        await postRequest('/cart/update', {productId: item.productId, quantity: newQuantity});
+        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
         item.quantity = newQuantity;
       } catch (e) {
         console.log(e);
@@ -225,7 +234,7 @@ export default {
       const queryStr = this.checkedItems
           .map(item => `${item.productId}-${item.quantity}`)
           .join(',');
-      this.$router.push({name: 'Checkout', query: {items: queryStr}})
+      this.$router.push({ name: 'Checkout', query: { items: queryStr } });
     }
   }
 }
@@ -263,6 +272,16 @@ export default {
 }
 
 .select-all input[type="checkbox"] {
+  /* 체크박스 크기를 키움 */
+  width: 24px;
+  height: 24px;
+  accent-color: #b27d4d;
+  margin-right: 8px;
+}
+.item-checkbox {
+  /* 체크박스 크기를 키움 */
+  width: 18px;
+  height: 18px;
   accent-color: #b27d4d;
   margin-right: 8px;
 }
@@ -299,13 +318,6 @@ export default {
   position: relative;
 }
 
-.item-checkbox {
-  accent-color: #b27d4d;
-  align-self: flex-start;
-  margin-top: 5px;
-  margin-right: 10px;
-}
-
 .item-image img {
   width: 80px;
   height: 80px;
@@ -322,17 +334,16 @@ export default {
   font-size: 1.1em;
   color: #333;
   margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.price-info span {
+  display: block;
 }
 
 .item-original-price {
-  text-decoration: line-through;
   color: #999;
-  margin-right: 8px;
-}
-
-.item-discount-rate {
-  color: #b27d4d;
-  font-weight: bold;
+  text-decoration: line-through;
   margin-right: 8px;
 }
 
