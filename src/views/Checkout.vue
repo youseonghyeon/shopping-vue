@@ -237,13 +237,12 @@ export default {
           productIds: productIds,
         });
         // 샘플 할인율 (10% 할인)
-        const discountRate = 0.9;
         this.detailedItems = response.data.map((product) => {
           const selected = this.selectedItems.find(
               (item) => item.productId === product.id
           );
           const price = Number(product.price);
-          const discountedPrice = price * discountRate;
+          const discountedPrice = price;
           return {
             ...product,
             quantity: selected ? selected.quantity : 0,
