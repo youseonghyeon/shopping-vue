@@ -20,6 +20,15 @@
           <span class="final-price">{{ formatPrice(product.price) }}</span>
         </template>
       </div>
+      <!-- 별점 표시 영역 (샘플: 4점) -->
+      <div class="rating">
+        <font-awesome-icon
+            v-for="n in 5"
+            :key="n"
+            :icon="n <= sampleRating ? 'star' : ['far', 'star']"
+        />
+        <p style="color: #5a5a5a; font-size: 12px;">(5)</p>
+      </div>
     </div>
   </div>
 </template>
@@ -38,8 +47,11 @@ export default {
       return this.product.discountRate && this.product.discountRate > 0;
     },
     discountPercent() {
-      // 소수점 없이 정수로 표시
       return this.hasDiscount ? (this.product.discountRate * 100).toFixed(0) : 0;
+    },
+    // 샘플 별점: 4점 (추후 실제 데이터로 대체 가능)
+    sampleRating() {
+      return 4;
     }
   },
   methods: {
@@ -140,5 +152,20 @@ export default {
   color: #b27d4d;
   font-weight: bold;
   font-size: 1.2em;
+}
+
+/* 별점 영역 */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 5px;
+}
+
+/* font-awesome 아이콘에 노란색 지정 */
+.rating svg {
+  color: #FFD700;
+  width: 13px;
+  height: 13px;
 }
 </style>

@@ -6,8 +6,10 @@ import {faHome, faSearch, faShoppingCart, faUser} from '@fortawesome/free-solid-
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 import '@/assets/styles.css'
 import VueCookies  from "vue-cookies";
+import { faStar as fasStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
 
-library.add(faSearch, faHome, faUser, faShoppingCart)
+library.add(fasStar, farStar, faSearch, faHome, faUser, faShoppingCart)
 
 createApp(App)
     .use(router)
