@@ -3,7 +3,23 @@
     <img :src="product.titleImage" alt="상품 이미지" />
     <div class="product-info">
       <h2>{{ product.name }}</h2>
-      <p>{{ formatPrice(product.price) }}</p>
+      <!-- 가격 표시 영역 -->
+      <div class="price-container">
+        <!-- 할인된 경우 -->
+        <template v-if="hasDiscount">
+          <div class="discount-price">
+            <span class="final-price">{{ formatPrice(product.discountedPrice) }}</span>
+            <span class="discount-badge">{{ discountPercent }}%</span>
+          </div>
+          <div class="original-price">
+            <del>{{ formatPrice(product.price) }}</del>
+          </div>
+        </template>
+        <!-- 할인 없는 경우 -->
+        <template v-else>
+          <span class="final-price">{{ formatPrice(product.price) }}</span>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -17,12 +33,20 @@ export default {
       required: true
     }
   },
+  computed: {
+    hasDiscount() {
+      return this.product.discountRate && this.product.discountRate > 0;
+    },
+    discountPercent() {
+      // 소수점 없이 정수로 표시
+      return this.hasDiscount ? (this.product.discountRate * 100).toFixed(0) : 0;
+    }
+  },
   methods: {
     goToProductDetail() {
       this.$router.push({ name: "ProductDetail", params: { id: this.product.id } });
     },
     formatPrice(value) {
-      // 숫자로 변환 후 toLocaleString을 사용하여 천단위 콤마 추가, 뒤에 "원" 추가
       const number = Number(value);
       return number.toLocaleString() + '원';
     }
@@ -40,6 +64,7 @@ export default {
   border-radius: 8px;
   box-sizing: border-box;
   transition: box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .product-card:hover {
@@ -54,19 +79,66 @@ export default {
   border-radius: 6px;
 }
 
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .product-info h2 {
   font-size: 1.1em;
-  margin: 0 0 5px;
+  margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* 두 줄까지만 보이도록 자름 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: #333333;
 }
 
-.product-info p {
+/* 가격 전체 영역 */
+.price-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 할인된 경우 */
+.discount-price {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.final-price {
+  font-size: 1.2em;
   color: #b27d4d;
   font-weight: bold;
-  margin: 0;
+}
+
+/* 할인 배지(퍼센트) */
+.discount-badge {
+  background-color: #b27d4d;
+  color: #fff;
+  font-size: 0.75em;
+  padding: 2px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.original-price {
+  color: #999;
+  font-size: 0.9em;
+  margin-top: -2px;
+}
+
+.original-price del {
+  color: #999;
+}
+
+/* 할인 없는 경우 */
+.price-container .final-price {
+  color: #b27d4d;
+  font-weight: bold;
+  font-size: 1.2em;
 }
 </style>

@@ -19,7 +19,7 @@
       <div class="order-summary">
         <div class="summary-row">
           <span>총 상품가격</span>
-          <span>{{ formatCurrency(totalProductPrice) }}</span>
+          <span>{{ formatCurrency(originalTotalPrice) }}</span>
         </div>
         <div class="summary-row">
           <span>총 배송비</span>
@@ -187,10 +187,6 @@ export default {
     // 최대 사용 가능한 포인트: 할인 후 상품 금액
     maxUsablePoints() {
       return Math.min(this.totalProductPrice, this.availablePoints);
-    },
-    remainingPoints() {
-      const remain = this.availablePoints - this.usedPoints;
-      return remain < 0 ? 0 : remain;
     }
   },
   created() {
@@ -217,12 +213,13 @@ export default {
         const response = await getRequest("/products/details", {productIds});
         // 할인 적용 없이 단순히 가격을 사용 (배송비 제외)
         this.detailedItems = response.data.map((product) => {
+          console.log(product)
           const selected = this.selectedItems.find((item) => item.productId === product.id);
           return {
             ...product,
             quantity: selected ? selected.quantity : 0,
             // 할인된 가격이 없으면 원래 가격 사용
-            discountedPrice: product.discountedPrice || product.price
+            discountedPrice: product.discountedPrice
           };
         });
         this.calculateTotals();

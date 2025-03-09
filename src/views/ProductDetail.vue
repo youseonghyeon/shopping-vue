@@ -1,55 +1,84 @@
 <template>
-  <div class="product-detail">
-    <HeaderComponent />
-
-    <!-- 제품 정보 영역 -->
-    <div class="product-info">
-      <h1>{{ product.name }}</h1>
-      <img :src="product.titleImage" alt="Product Image" class="title-image"/>
-
-      <div class="pricing">
-        <p class="price">가격: {{ formatPrice(product.price) }}</p>
-        <p class="discount" v-if="product.discountRate">
-          할인율: {{ (product.discountRate * 100).toFixed(1) }}%
-        </p>
-      </div>
-
-      <!-- 수량 선택 및 장바구니 담기 -->
-      <div class="add-to-cart">
-        <div class="quantity-selector">
-          <button @click="decrementQuantity">-</button>
-          <input type="number" min="1" v-model.number="quantity"/>
-          <button @click="incrementQuantity">+</button>
+  <div class="product-detail-page">
+    <HeaderComponent title="상품 상세" />
+    <div class="detail-content">
+      <!-- 제품 정보 카드 -->
+      <div class="product-card">
+        <div style="color: #959595">== 카테고리 위치 ==</div>
+        <div class="image-wrapper">
+          <img :src="product.titleImage" alt="상품 메인 이미지" class="title-image" />
         </div>
-        <button class="add-to-cart-btn" @click="addToCart">
-          장바구니에 담기
-        </button>
-      </div>
-    </div>
+        <div class="product-info">
+          <h2 class="product-name">{{ product.name }}</h2>
+          <!-- 가격/할인 정보 -->
+          <div class="pricing">
+            <!-- 할인 있는 경우 -->
+            <template v-if="hasDiscount">
+              <div class="discount-price">
+                <span class="final-price">{{ formatPrice(product.discountedPrice) }}</span>
+                <span class="original-price">
+                  <del>{{ formatPrice(product.price) }}</del>
+                </span>
+                <span class="discount-badge">{{ discountPercent }}% 할인</span>
+              </div>
+            </template>
+            <!-- 할인 없는 경우 -->
+            <template v-else>
+              <span class="final-price">{{ formatPrice(product.price) }}</span>
+            </template>
+          </div>
 
-    <!-- 제품 상세 설명 영역 -->
-    <div class="product-description">
-      <h2>제품 설명</h2>
-      <!-- 세로로 긴 상세 이미지가 있으면 보여주고, 없으면 텍스트 설명 -->
-      <img v-if="product.detailImage" :src="product.detailImage" alt="Product Description" class="detail-image"/>
-      <p v-else>{{ product.description }}</p>
-      <div style="height: 1000px; border: 2px solid #b27d4d;">
-        테스트용 박스
-      </div>
-    </div>
-
-    <!-- 리뷰 영역 -->
-    <div class="reviews" v-if="reviews.length">
-      <h2>리뷰</h2>
-      <div v-for="(review, index) in reviews" :key="index" class="review">
-        <div class="star-rating">
-          <font-awesome-icon
-              v-for="n in 5"
-              :key="n"
-              :icon="n <= review.rating ? 'star' : ['far', 'star']"
-          />
+          <!-- 수량 및 장바구니/찜하기 -->
+          <div class="action-section">
+            <div class="quantity-selector">
+              <button @click="decrementQuantity">-</button>
+              <input type="number" min="1" v-model.number="quantity" />
+              <button @click="incrementQuantity">+</button>
+            </div>
+            <div class="buttons">
+              <button class="add-to-cart-btn" @click="addToCart">
+                장바구니
+              </button>
+              <button class="wishlist-btn" @click="toggleWishlist">
+                <font-awesome-icon :icon="isWished ? 'heart' : ['far', 'heart']" />
+                {{ isWished ? '찜 취소' : '찜하기' }}
+              </button>
+            </div>
+          </div>
         </div>
-        <p class="review-text">{{ review.text }}</p>
+      </div>
+
+      <!-- 상세 설명 섹션 -->
+      <div class="product-description">
+        <h3>상품정보</h3>
+        <!-- 세로로 긴 이미지가 있을 경우 -->
+        <img
+            v-if="product.detailImage"
+            :src="product.detailImage"
+            alt="상세 이미지"
+            class="detail-image"
+        />
+        <!-- 텍스트 설명 -->
+        <p v-else>{{ product.description }}</p>
+      </div>
+
+      <!-- 리뷰 섹션 -->
+      <div class="reviews" v-if="reviews.length">
+        <h3>리뷰 ({{ reviews.length }})</h3>
+        <div
+            v-for="(review, index) in reviews"
+            :key="index"
+            class="review-item"
+        >
+          <div class="star-rating">
+            <font-awesome-icon
+                v-for="n in 5"
+                :key="n"
+                :icon="n <= review.rating ? 'star' : ['far', 'star']"
+            />
+          </div>
+          <p class="review-text">{{ review.text }}</p>
+        </div>
       </div>
     </div>
     <BottomNav />
@@ -57,47 +86,42 @@
 </template>
 
 <script>
-import { getRequest, postRequest } from "@/api/http.js";
 import HeaderComponent from "@/components/Header.vue";
 import BottomNav from "@/components/BottomNav.vue";
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { getRequest, postRequest } from "@/api/http.js";
 
 export default {
-  name: 'ProductDetail',
+  name: "ProductDetail",
   components: { HeaderComponent, BottomNav, FontAwesomeIcon },
   data() {
     return {
       product: {},
       quantity: 1,
-      reviews: []
+      reviews: [],
+      isWished: false // 찜 여부
+    };
+  },
+  computed: {
+    hasDiscount() {
+      return this.product.discountRate && this.product.discountRate > 0;
+    },
+    discountPercent() {
+      return this.hasDiscount
+          ? (this.product.discountRate * 100).toFixed(0)
+          : 0;
     }
   },
   created() {
     window.scrollTo(0, 0);
     this.fetchProduct();
-    // this.fetchReviews();
-    this.reviews = [{
-      rating: 5,
-      text: "좋아요!"
-    }, {
-      rating: 4,
-      text: "괜찮아요."
-    }, {
-      rating: 3,
-      text: "그저 그래요."
-    }, {
-      rating: 4,
-      text: "괜찮아요."
-    }, {
-      rating: 3,
-      text: "그저 그래요."
-    }, {
-      rating: 4,
-      text: "괜찮아요."
-    }, {
-      rating: 3,
-      text: "그저 그래요."
-    }]
+    this.fetchReviews(); // 실제 구현 시 리뷰 API 연동
+    // 임시로 샘플 리뷰:
+    this.reviews = [
+      { rating: 5, text: "좋아요!" },
+      { rating: 4, text: "만족스러워요." },
+      { rating: 3, text: "보통입니다." }
+    ];
   },
   methods: {
     async fetchProduct() {
@@ -105,28 +129,19 @@ export default {
       try {
         const response = await getRequest("/products/" + productId);
         this.product = response.data;
+        this.product.detailImage = 'https://thumbnail7.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2024/11/08/13/6/063e3f93-7b4d-4b13-9079-24b95eecdfaa.jpg';
       } catch (error) {
-        console.error("Error fetching product:", error);
+        console.error("상품 정보를 불러오지 못했습니다:", error);
       }
     },
     async fetchReviews() {
       const productId = this.$route.params.id;
       try {
-        const response = await getRequest("/products/" + productId + "/reviews");
-        this.reviews = response.data;
+        // 실제 리뷰 API가 있다면 여기서 호출
+        // const response = await getRequest(`/products/${productId}/reviews`);
+        // this.reviews = response.data;
       } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    },
-    async addToCart() {
-      try {
-        const response = await postRequest("/cart/create", {
-          productId: this.product.id,
-          quantity: this.quantity
-        });
-        console.log(response);
-      } catch (error) {
-        console.error("Error adding to cart:", error);
+        console.error("리뷰 정보를 불러오지 못했습니다:", error);
       }
     },
     incrementQuantity() {
@@ -137,111 +152,229 @@ export default {
         this.quantity--;
       }
     },
+    async addToCart() {
+      try {
+        const response = await postRequest("/cart/create", {
+          productId: this.product.id,
+          quantity: this.quantity
+        });
+        alert("장바구니에 담았습니다!");
+      } catch (error) {
+        console.error("장바구니 담기에 실패했습니다:", error);
+        alert("장바구니 담기에 실패했습니다.");
+      }
+    },
+    toggleWishlist() {
+      // 찜하기 로직 (백엔드 연동 필요)
+      // 예: POST /wishlist/add or /wishlist/remove
+      this.isWished = !this.isWished;
+      alert(this.isWished ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다.");
+    },
     formatPrice(value) {
       const number = Number(value);
-      return number.toLocaleString() + '원';
+      return number.toLocaleString() + "원";
     }
   }
-}
+};
 </script>
 
 <style scoped>
-
-.product-detail {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-bottom: 60px; /* 하단 고정 네비게이션 높이만큼 여백 추가 */
+.product-detail-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 60px; /* 하단 네비게이션 공간 고려 */
 }
 
-.product-info {
+.detail-content {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 0;
+}
+
+/* 상품 카드 전체 래퍼 */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 20px;
+}
+
+/* 메인 이미지 래퍼 */
+.image-wrapper {
+  width: 100%;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .title-image {
   width: 100%;
   height: auto;
-  margin-bottom: 20px;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 6px;
+  background-color: #fafafa;
 }
 
-.pricing {
-  margin-bottom: 20px;
-}
-
-.price {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-.discount {
-  color: #b27d4d;
-  font-size: 1em;
-}
-
-.add-to-cart {
+/* 상품명, 가격 등 */
+.product-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   gap: 10px;
+  text-align: center;
+}
+
+.product-name {
+  font-size: 1.3em;
+  color: #333;
+  margin: 0;
+}
+
+/* 가격/할인 영역 */
+.pricing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.discount-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.final-price {
+  font-size: 1.3em;
+  color: #b27d4d;
+  font-weight: bold;
+}
+
+.original-price {
+  font-size: 0.95em;
+  color: #999;
+}
+
+.discount-badge {
+  background-color: #b27d4d;
+  color: #fff;
+  font-size: 0.75em;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* 수량, 장바구니, 찜하기 영역 */
+.action-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
 }
 
 .quantity-selector {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
 
 .quantity-selector button {
   background-color: #f5f5f5;
   border: 1px solid #ccc;
   color: #333;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .quantity-selector input {
   width: 40px;
   text-align: center;
-  margin: 0 5px;
+  font-size: 1em;
+}
+
+.add-to-cart-btn,
+.wishlist-btn {
+  border: none;
+  width: 150px;
+  height: 40px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9em;
 }
 
 .add-to-cart-btn {
   background-color: #b27d4d;
   color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
-.add-to-cart-btn:hover {
-  opacity: 0.9;
+.wishlist-btn {
+  background-color: #f5f5f5;
+  color: #333;
 }
 
+.add-to-cart-btn:hover,
+.wishlist-btn:hover {
+  background-color: #9a633d;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* 상세 설명 */
 .product-description {
-  margin-bottom: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.product-description h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
 }
 
 .detail-image {
   width: 100%;
   height: auto;
-  max-height: 500px;
   object-fit: contain;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
 }
 
+/* 리뷰 섹션 */
 .reviews {
-  margin-top: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.review {
+.reviews h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.review-item {
   border-bottom: 1px solid #e0e0e0;
   padding: 10px 0;
+}
+
+.review-item:last-child {
+  border-bottom: none;
 }
 
 .star-rating {

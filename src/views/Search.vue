@@ -58,7 +58,7 @@
 <script>
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import OneLIneProductCard from "@/components/OneLIneProductCard.vue";
+import OneLineProductCard from "@/components/OneLineProductCard.vue";
 import { getRequest } from '@/api/http.js'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -67,7 +67,7 @@ export default {
   components: {
     HeaderComponent,
     BottomNav,
-    OneLIneProductCard,
+    OneLIneProductCard: OneLineProductCard,
     FontAwesomeIcon
   },
   data() {
