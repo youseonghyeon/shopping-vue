@@ -57,13 +57,20 @@ export default {
         const response = await postRequest("/login", {
           email: encrypt(this.email),
           password: encrypt(this.password),
+          rememberMe: this.rememberMe
         });
         if (response.data.status === "success") {
           this.$router.push("/");
         }
       } catch (error) {
         console.error("로그인 실패:", error);
-        alert("로그인에 실패했습니다.");
+        // error.response.data.message가 존재하면 사용, 아니면 기본 메시지
+        console.log(error)
+        if (error.response && error.response.data && error.response.data.message) {
+          alert(error.response.data.message);
+        } else {
+          alert("로그인에 실패했습니다. 다시 시도해 주세요.");
+        }
       }
     },
   },
