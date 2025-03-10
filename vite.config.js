@@ -14,6 +14,7 @@ export default defineConfig({
     port: 80,
     strictPort: true,
     proxy: {
+      // dev 설정, PRD는 nignx.conf에서 설정
       "/api": {
         target: "http://192.168.0.17:8080",
         changeOrigin: true,

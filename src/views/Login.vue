@@ -36,7 +36,7 @@
 <script>
 import {postRequest} from "@/api/http.js";
 import {goMain} from "@/utils/navigation.js";
-
+import { encrypt } from "@/utils/encryptUtils.js";
 
 export default {
   name: "Login",
@@ -55,8 +55,8 @@ export default {
     async handleLogin() {
       try {
         const response = await postRequest("/login", {
-          email: this.email,
-          password: this.password,
+          email: encrypt(this.email),
+          password: encrypt(this.password),
         });
         if (response.data.status === "success") {
           this.$router.push("/");
