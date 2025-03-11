@@ -24,6 +24,10 @@
           </div>
         </div>
         <button type="submit" class="login-btn">로그인</button>
+        <!-- 테스트용 로그인 버튼 -->
+        <button type="button" @click="testUserLogin()" class="login-btn"
+                style="margin-top: 20px; background-color: #b8b8b8;">테스트 계정 로그인
+        </button>
       </form>
       <div class="signup">
         <p>아직 회원이 아니신가요?</p>
@@ -36,7 +40,7 @@
 <script>
 import {postRequest} from "@/api/http.js";
 import {goMain} from "@/utils/navigation.js";
-import { encrypt } from "@/utils/encryptUtils.js";
+import {encrypt} from "@/utils/encryptUtils.js";
 
 export default {
   name: "Login",
@@ -59,7 +63,7 @@ export default {
           password: encrypt(this.password),
           rememberMe: this.rememberMe
         });
-        if (response.data.status === "success") {
+        if (response.data.success) {
           this.$router.push("/");
         }
       } catch (error) {
@@ -73,6 +77,11 @@ export default {
         }
       }
     },
+    testUserLogin() {
+      this.email = "testUser@mail.com"
+      this.password = "3jr5b1j3jbl_!"
+      this.handleLogin()
+    }
   },
 };
 </script>

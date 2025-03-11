@@ -112,7 +112,6 @@
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
 import { getRequest, postRequest } from "@/api/http.js"
-// FontAwesomeIcon는 전역 등록된 것으로 가정합니다.
 
 export default {
   name: 'Cart',

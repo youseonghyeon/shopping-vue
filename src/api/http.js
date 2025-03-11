@@ -11,19 +11,24 @@ const http = axios.create({
     withCredentials: true,
 })
 
-export const getRequest = async (url, params = {}) => {
-    let response = await http.get(url, {
-        params,
-        paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})
-    });
-    let data = response.data;
-    return {
-        status: data.status,
-        message: data.message,
-        data: data.data,
-        errorDetails: data.errorDetails,
-        timestamp: data.timestamp
-    };
+export const getRequest = async (url, params = {}, useAuthorizationExceptionAlert = true) => {
+    try {
+        let response = await http.get(url, {params, paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})});
+        let data = response.data;
+        return {
+            status: data.status,
+            message: data.message,
+            data: data.data,
+            errorDetails: data.errorDetails,
+            timestamp: data.timestamp
+        };
+    } catch (error) {
+        if (useAuthorizationExceptionAlert && error.response.status === 401) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '/login';
+        }
+        console.error("GET 요청 오류:", error);
+    }
 }
 
 export const getAsyncRequest = async (url, params = {}) => {

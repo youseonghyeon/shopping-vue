@@ -32,66 +32,65 @@
     <BottomNav/>
   </div>
 </template>
+<script>
+import HeaderComponent from '../components/Header.vue';
+import BottomNav from '@/components/BottomNav.vue';
+import { getRequest, postRequest } from '@/api/http.js';
 
-<script setup>
-import {onMounted, ref} from 'vue'
-import {useRouter} from 'vue-router'
-import HeaderComponent from '../components/Header.vue'
-import BottomNav from '@/components/BottomNav.vue'
-import {getRequest, postRequest} from '@/api/http.js'
-
-const router = useRouter()
-
-// 간단한 사용자 정보
-const userName = ref('')
-const userPoint = ref('')
-const isLoggedIn = ref(false)
-
-// 이동 함수들 (예시)
-const goOrderList = () => {
-  alert('주문목록 페이지로 이동')
-}
-const goWishList = () => {
-  alert('찜한상품 페이지로 이동')
-}
-const goRecentView = () => {
-  alert('최근 본 상품 페이지로 이동')
-}
-const goCancelReturnExchange = () => {
-  alert('취소/반품/교환목록 페이지로 이동')
-}
-const goReviewManagement = () => {
-  alert('리뷰관리 페이지로 이동')
-}
-
-// 로그인 페이지 이동 함수
-const goLogin = () => {
-  router.push('/login')
-}
-
-const handleLogout = async () => {
-  try {
-    const currentPath = window.location.pathname; // 현재 경로 가져오기
-    const res = await postRequest('/logout', {redirectUrl: currentPath});
-    const {redirectUrl} = res.data;
-    window.location.href = redirectUrl;
-  } catch (err) {
-    console.error('로그아웃 에러:', err);
-  }
+export default {
+  name: 'MyComponent',
+  components: {
+    HeaderComponent,
+    BottomNav
+  },
+  data() {
+    return {
+      userName: '',
+      userPoint: '',
+      isLoggedIn: false
+    };
+  },
+  async mounted() {
+    // 마이페이지 API를 통해 로그인 상태, 포인트, 사용자 정보를 가져옴
+    let response = await getRequest('/mypage', null, false);
+    const { loggedIn, point, role, username } = response.data;
+    this.isLoggedIn = loggedIn;
+    this.userName = username;
+    this.userPoint = point;
+  },
+  methods: {
+    // 페이지 이동 함수들
+    goOrderList() {
+      this.$router.push('/order-list');
+    },
+    goWishList() {
+      alert('찜한상품 페이지로 이동');
+    },
+    goRecentView() {
+      alert('최근 본 상품 페이지로 이동');
+    },
+    goCancelReturnExchange() {
+      alert('취소/반품/교환목록 페이지로 이동');
+    },
+    goReviewManagement() {
+      alert('리뷰관리 페이지로 이동');
+    },
+    goLogin() {
+      this.$router.push('/login');
+    },
+    async handleLogout() {
+      try {
+        const currentPath = window.location.pathname; // 현재 경로 가져오기
+        const res = await postRequest('/logout', { redirectUrl: currentPath });
+        const { redirectUrl } = res.data;
+        window.location.href = redirectUrl;
+      } catch (err) {
+        console.error('로그아웃 에러:', err);
+      }
+    }
+  },
 };
-
-onMounted(async () => {
-  try {
-    const response = await getRequest('/mypage')
-    const {loggedIn, point, role, username} = response.data;
-    isLoggedIn.value = loggedIn
-    userName.value = username;
-    userPoint.value = point;
-  } catch (err) {
-  }
-})
 </script>
-
 <style scoped>
 .mypage-page {
   padding: 0;

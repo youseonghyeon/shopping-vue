@@ -60,7 +60,7 @@ const routes = [
         path: '/order-confirmation/:orderId',
         name: 'OrderConfirmation',
         component: () => import('@/views/OrderConfirmation.vue')
-    }
+    },
 ]
 const router = createRouter({
     history: createWebHistory(),
