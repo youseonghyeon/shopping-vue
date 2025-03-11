@@ -1,29 +1,29 @@
 <template>
   <div class="container">
     <!-- 상단 헤더 -->
-    <HeaderComponent />
+    <HeaderComponent/>
 
     <!-- 검색 입력 영역 -->
     <div class="search-container">
       <input
-          type="text"
           v-model="query"
           placeholder="검색어를 입력하세요"
+          type="text"
       />
       <button @click="onSearch">검색</button>
     </div>
 
     <!-- 가격 정렬 버튼 영역 (검색 결과가 있을 때만) -->
-    <div class="sort-buttons" v-if="products.length > 0">
+    <div v-if="products.length > 0" class="sort-buttons">
       <button
-          @click="changeSort('asc')"
           :class="{ active: sortOrder === 'asc' }"
+          @click="changeSort('asc')"
       >
         Price Ascending
       </button>
       <button
-          @click="changeSort('desc')"
           :class="{ active: sortOrder === 'desc' }"
+          @click="changeSort('desc')"
       >
         Price Descending
       </button>
@@ -33,7 +33,7 @@
     <section class="product-list">
       <template v-if="searched && products.length === 0">
         <div class="no-results">
-          <font-awesome-icon icon="frown" class="no-results-icon" />
+          <font-awesome-icon class="no-results-icon" icon="frown"/>
           <p>검색 결과가 없습니다. 다른 검색어를 시도해 보세요.</p>
         </div>
       </template>
@@ -51,7 +51,7 @@
     <div ref="infiniteScrollTrigger" class="infinite-scroll-trigger"></div>
 
     <!-- 하단 네비게이션 -->
-    <BottomNav />
+    <BottomNav/>
   </div>
 </template>
 
@@ -59,8 +59,8 @@
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
 import OneLineProductCard from "@/components/OneLineProductCard.vue";
-import { getRequest } from '@/api/http.js'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {getRequest} from '@/api/http.js'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 export default {
   name: 'SearchPage',

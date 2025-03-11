@@ -16,21 +16,21 @@
           <div class="form-group">
             <label for="findIdName">이름</label>
             <input
-                type="text"
                 id="findIdName"
                 v-model="findId.name"
                 placeholder="이름을 입력하세요"
                 required
+                type="text"
             />
           </div>
           <div class="form-group">
             <label for="findIdEmail">이메일</label>
             <input
-                type="email"
                 id="findIdEmail"
                 v-model="findId.email"
                 placeholder="이메일을 입력하세요"
                 required
+                type="email"
             />
           </div>
           <button type="submit">아이디 찾기</button>
@@ -40,21 +40,21 @@
           <div class="form-group">
             <label for="findPwUserId">아이디</label>
             <input
-                type="text"
                 id="findPwUserId"
                 v-model="findPassword.userId"
                 placeholder="아이디를 입력하세요"
                 required
+                type="text"
             />
           </div>
           <div class="form-group">
             <label for="findPwEmail">이메일</label>
             <input
-                type="email"
                 id="findPwEmail"
                 v-model="findPassword.email"
                 placeholder="이메일을 입력하세요"
                 required
+                type="email"
             />
           </div>
           <button type="submit">비밀번호 찾기</button>
@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 const activeTab = ref('findId') // 기본 탭은 아이디 찾기
 

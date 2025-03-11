@@ -1,6 +1,6 @@
 <template>
   <div class="category-list-page">
-    <HeaderComponent />
+    <HeaderComponent/>
     <h2>카테고리 선택</h2>
     <ul class="category-list">
       <li v-for="(category, index) in categories" :key="index">

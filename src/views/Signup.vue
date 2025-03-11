@@ -7,60 +7,60 @@
       <div class="form-group">
         <label for="email">아이디(이메일)</label>
         <input
-            type="text"
             id="email"
             v-model="form.email"
             placeholder="이메일을 입력하세요."
+            type="text"
         />
-        <p class="error-msg" v-if="errors.email">{{ errors.email }}</p>
+        <p v-if="errors.email" class="error-msg">{{ errors.email }}</p>
       </div>
 
       <!-- 비밀번호 -->
       <div class="form-group">
         <label for="password">비밀번호</label>
         <input
-            type="password"
             id="password"
             v-model="form.password"
             placeholder="영문/숫자/특수문자 2가지 이상 조합 (8~20자)"
+            type="password"
         />
-        <p class="error-msg" v-if="errors.password">{{ errors.password }}</p>
+        <p v-if="errors.password" class="error-msg">{{ errors.password }}</p>
       </div>
 
       <!-- 비밀번호 확인 -->
       <div class="form-group">
         <label for="passwordConfirm">비밀번호 확인</label>
         <input
-            type="password"
             id="passwordConfirm"
             v-model="form.passwordConfirm"
             placeholder="비밀번호를 다시 입력하세요."
+            type="password"
         />
-        <p class="error-msg" v-if="errors.passwordConfirm">{{ errors.passwordConfirm }}</p>
+        <p v-if="errors.passwordConfirm" class="error-msg">{{ errors.passwordConfirm }}</p>
       </div>
 
       <!-- 이름 -->
       <div class="form-group">
         <label for="name">이름</label>
         <input
-            type="text"
             id="name"
             v-model="form.name"
             placeholder="이름을 정확히 입력하세요."
+            type="text"
         />
-        <p class="error-msg" v-if="errors.name">{{ errors.name }}</p>
+        <p v-if="errors.name" class="error-msg">{{ errors.name }}</p>
       </div>
 
       <!-- 휴대폰 번호 -->
       <div class="form-group">
         <label for="phone">휴대폰 번호</label>
         <input
-            type="text"
             id="phone"
             v-model="form.phone"
             placeholder="휴대폰 번호를 정확하게 입력하세요."
+            type="text"
         />
-        <p class="error-msg" v-if="errors.phone">{{ errors.phone }}</p>
+        <p v-if="errors.phone" class="error-msg">{{ errors.phone }}</p>
       </div>
 
       <!-- 약관 동의 영역 -->
@@ -69,9 +69,9 @@
         <div class="main-agree">
           <div class="checkbox-group">
             <input
-                type="checkbox"
                 id="agreeAll"
                 v-model="agreeAll"
+                type="checkbox"
                 @change="toggleAllAgreements"
             />
             <label for="agreeAll">모두 확인했으며 동의합니다.</label>
@@ -84,35 +84,35 @@
         <!-- 개별 약관 체크박스들 -->
         <div class="sub-agree-list">
           <div class="checkbox-group">
-            <input type="checkbox" id="ageConsent" v-model="ageConsent" />
+            <input id="ageConsent" v-model="ageConsent" type="checkbox"/>
             <label for="ageConsent">[필수] 만 14세 이상입니다.</label>
           </div>
           <div class="checkbox-group">
-            <input type="checkbox" id="termFinance" v-model="termFinance" />
+            <input id="termFinance" v-model="termFinance" type="checkbox"/>
             <label for="termFinance">[필수] 전자금융거래 이용약관 동의</label>
           </div>
           <div class="checkbox-group">
-            <input type="checkbox" id="termPrivacy" v-model="termPrivacy" />
+            <input id="termPrivacy" v-model="termPrivacy" type="checkbox"/>
             <label for="termPrivacy">[필수] 개인정보수집 및 이용 동의</label>
           </div>
           <div class="checkbox-group">
-            <input type="checkbox" id="termOptional" v-model="termOptional" />
+            <input id="termOptional" v-model="termOptional" type="checkbox"/>
             <label for="termOptional">[선택] 이벤트, 쿠폰 수신 동의</label>
           </div>
         </div>
 
         <!-- 필수 항목 미체크 시 에러 메시지 표시 -->
-        <p class="error-msg" v-if="errors.agreeAll">{{ errors.agreeAll }}</p>
+        <p v-if="errors.agreeAll" class="error-msg">{{ errors.agreeAll }}</p>
       </div>
 
-      <button type="submit" class="submit-btn">가입하기</button>
+      <button class="submit-btn" type="submit">가입하기</button>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { postRequest } from "@/api/http.js"
+import {ref, watch} from 'vue'
+import {postRequest} from "@/api/http.js"
 import router from "@/router/index.js"
 import {goMain} from "@/utils/navigation.js";
 

@@ -35,7 +35,7 @@
 <script>
 import HeaderComponent from '../components/Header.vue';
 import BottomNav from '@/components/BottomNav.vue';
-import { getRequest, postRequest } from '@/api/http.js';
+import {getRequest, postRequest} from '@/api/http.js';
 
 export default {
   name: 'MyComponent',
@@ -53,7 +53,7 @@ export default {
   async mounted() {
     // 마이페이지 API를 통해 로그인 상태, 포인트, 사용자 정보를 가져옴
     let response = await getRequest('/mypage', null, false);
-    const { loggedIn, point, role, username } = response.data;
+    const {loggedIn, point, role, username} = response.data;
     this.isLoggedIn = loggedIn;
     this.userName = username;
     this.userPoint = point;
@@ -81,8 +81,8 @@ export default {
     async handleLogout() {
       try {
         const currentPath = window.location.pathname; // 현재 경로 가져오기
-        const res = await postRequest('/logout', { redirectUrl: currentPath });
-        const { redirectUrl } = res.data;
+        const res = await postRequest('/logout', {redirectUrl: currentPath});
+        const {redirectUrl} = res.data;
         window.location.href = redirectUrl;
       } catch (err) {
         console.error('로그아웃 에러:', err);

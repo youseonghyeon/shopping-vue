@@ -5,21 +5,21 @@
       <h2>장바구니</h2>
 
       <!-- 전체 선택 및 선택 삭제 컨트롤 -->
-      <div class="select-controls" v-if="cartItems.length > 0">
+      <div v-if="cartItems.length > 0" class="select-controls">
         <div class="select-all">
           <input
-              type="checkbox"
-              :checked="allChecked"
-              @change="toggleSelectAll($event)"
               id="select-all"
+              :checked="allChecked"
               class="item-checkbox"
+              type="checkbox"
+              @change="toggleSelectAll($event)"
           />
           <label for="select-all">전체 선택</label>
         </div>
         <button
+            :disabled="checkedItems.length === 0"
             class="delete-selected"
             @click="deleteSelectedItems"
-            :disabled="checkedItems.length === 0"
         >
           <font-awesome-icon icon="trash-alt"/>
           선택 삭제
@@ -34,7 +34,7 @@
             class="cart-item"
         >
           <!-- 개별 체크박스: 왼쪽 상단으로 위치 -->
-          <input type="checkbox" v-model="item.checked" class="item-checkbox"/>
+          <input v-model="item.checked" class="item-checkbox" type="checkbox"/>
 
           <!-- 상품 이미지 -->
           <div class="item-image">
@@ -88,7 +88,7 @@
       <p v-if="cartItems.length === 0">장바구니가 비어 있습니다.</p>
 
       <!-- 요약 영역 -->
-      <div class="cart-summary" v-if="cartItems.length > 0">
+      <div v-if="cartItems.length > 0" class="cart-summary">
         <div class="summary-row">
           <span>총 상품가격</span>
           <span>{{ formatCurrency(totalProductPrice) }}</span>
@@ -111,7 +111,7 @@
 <script>
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import { getRequest, postRequest } from "@/api/http.js"
+import {getRequest, postRequest} from "@/api/http.js"
 
 export default {
   name: 'Cart',
@@ -167,17 +167,17 @@ export default {
       } catch (e) {
         if (e.status === 403) {
           alert('로그인이 필요합니다.');
-          this.$router.push({ name: 'Login' });
+          this.$router.push({name: 'Login'});
         } else {
           console.log(e);
         }
       }
     },
     formatCurrency(value) {
-      return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 }).format(value) + '원';
+      return new Intl.NumberFormat('ko-KR', {maximumFractionDigits: 0}).format(value) + '원';
     },
     goToProductDetail(productId) {
-      this.$router.push({ name: "ProductDetail", params: { id: productId } });
+      this.$router.push({name: "ProductDetail", params: {id: productId}});
     },
     toggleSelectAll(event) {
       const checked = event.target.checked;
@@ -193,7 +193,7 @@ export default {
       if (confirm("선택한 항목을 삭제하시겠습니까?")) {
         let checkedProductIds = this.cartItems.filter(item => item.checked).map(item => item.productId);
         console.log(checkedProductIds);
-        let response = await postRequest('/cart/delete', { productIds: checkedProductIds });
+        let response = await postRequest('/cart/delete', {productIds: checkedProductIds});
         alert(response.data.message);
         this.cartItems = this.cartItems.filter(item => !item.checked);
       }
@@ -206,7 +206,7 @@ export default {
     async incrementQuantity(item) {
       const newQuantity = item.quantity + 1;
       try {
-        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
+        await postRequest('/cart/update', {productId: item.productId, quantity: newQuantity});
         item.quantity = newQuantity;
       } catch (e) {
         console.log(e);
@@ -217,7 +217,7 @@ export default {
       if (item.quantity <= 1) return;
       const newQuantity = item.quantity - 1;
       try {
-        await postRequest('/cart/update', { productId: item.productId, quantity: newQuantity });
+        await postRequest('/cart/update', {productId: item.productId, quantity: newQuantity});
         item.quantity = newQuantity;
       } catch (e) {
         console.log(e);
@@ -233,7 +233,7 @@ export default {
       const queryStr = this.checkedItems
           .map(item => `${item.productId}-${item.quantity}`)
           .join(',');
-      this.$router.push({ name: 'Checkout', query: { items: queryStr } });
+      this.$router.push({name: 'Checkout', query: {items: queryStr}});
     }
   }
 }
@@ -277,6 +277,7 @@ export default {
   accent-color: #b27d4d;
   margin-right: 8px;
 }
+
 .item-checkbox {
   /* 체크박스 크기를 키움 */
   width: 18px;

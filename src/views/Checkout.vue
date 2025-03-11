@@ -37,10 +37,10 @@
             <!-- 입력 및 전액사용 버튼 -->
             <div class="input-row">
               <input
-                  type="number"
-                  min="0"
-                  :max="maxUsablePoints"
                   v-model.number="usedPoints"
+                  :max="maxUsablePoints"
+                  min="0"
+                  type="number"
               />
               <button type="button" @click="useAllPoints">전액사용</button>
             </div>
@@ -89,9 +89,9 @@
             </select>
             <div v-if="selectedDeliveryRequest === '기타'">
               <input
-                  type="text"
                   v-model="customDeliveryRequest"
                   placeholder="직접 입력"
+                  type="text"
               />
             </div>
           </div>
@@ -100,22 +100,22 @@
             <label>결제 수단</label>
             <div class="toggle-group">
               <div
-                  class="toggle-option"
                   :class="{ selected: paymentMethod === 'bank' }"
+                  class="toggle-option"
                   @click="paymentMethod = 'bank'"
               >
                 계좌이체/무통장 입금
               </div>
               <div
-                  class="toggle-option"
                   :class="{ selected: paymentMethod === 'card' }"
+                  class="toggle-option"
                   @click="paymentMethod = 'card'"
               >
                 신용/체크카드
               </div>
               <div
-                  class="toggle-option"
                   :class="{ selected: paymentMethod === 'mobile' }"
+                  class="toggle-option"
                   @click="paymentMethod = 'mobile'"
               >
                 휴대폰 결제
@@ -138,7 +138,7 @@
             </p>
           </div>
           <!-- 결제하기 버튼 -->
-          <button type="submit" class="submit-button">결제하기</button>
+          <button class="submit-button" type="submit">결제하기</button>
         </form>
       </div>
     </div>

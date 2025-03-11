@@ -1,6 +1,6 @@
 <template>
-  <router-view />
-  <FooterInfo />
+  <router-view/>
+  <FooterInfo/>
 </template>
 
 <script>

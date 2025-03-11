@@ -46,9 +46,11 @@ export default {
   margin-bottom: 10px;
   background-color: #fafafa;
 }
+
 .item-info, .price-info {
   flex: 1;
 }
+
 .item-info p, .price-info p {
   margin: 4px 0;
   font-size: 0.95em;

@@ -13,7 +13,10 @@ const http = axios.create({
 
 export const getRequest = async (url, params = {}, useAuthorizationExceptionAlert = true) => {
     try {
-        let response = await http.get(url, {params, paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})});
+        let response = await http.get(url, {
+            params,
+            paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})
+        });
         let data = response.data;
         return {
             status: data.status,

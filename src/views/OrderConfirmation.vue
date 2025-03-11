@@ -1,8 +1,8 @@
 <template>
   <div class="order-confirmation-page">
-    <HeaderComponent title="주문 확인" />
+    <HeaderComponent title="주문 확인"/>
     <div class="content">
-      <div class="order-summary-card" v-if="order">
+      <div v-if="order" class="order-summary-card">
         <h2>주문이 완료되었습니다!</h2>
         <div class="order-info">
           <div class="order-info-row">
@@ -58,14 +58,14 @@
       </div>
       <div v-else class="loading">주문 정보를 불러오는 중...</div>
     </div>
-    <BottomNav />
+    <BottomNav/>
   </div>
 </template>
 
 <script>
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import { getRequest } from '@/api/http.js'
+import {getRequest} from '@/api/http.js'
 
 export default {
   name: 'OrderConfirmation',
@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     goToHome() {
-      this.$router.push({ name: 'Home' });
+      this.$router.push({name: 'Home'});
     },
     async fetchOrder() {
       try {
@@ -135,25 +135,30 @@ export default {
   min-height: 100vh;
   padding-bottom: 60px; /* 하단 네비게이션 고려 */
 }
+
 .content {
   max-width: 600px;
   margin: 40px auto;
   padding: 20px;
 }
+
 .order-summary-card {
   background-color: #fff;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .order-summary-card h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
 }
+
 .order-info {
   margin-bottom: 20px;
 }
+
 .order-info-row {
   display: flex;
   justify-content: space-between;
@@ -161,18 +166,22 @@ export default {
   border-bottom: 1px dashed #ddd;
   font-size: 0.95em;
 }
+
 .order-info-row:last-child {
   border-bottom: none;
 }
+
 .order-info-row .label {
   font-weight: bold;
   color: #555;
 }
+
 .order-info-row.total-payment {
   font-size: 1.1em;
   font-weight: bold;
   color: #b27d4d;
 }
+
 .home-button {
   display: block;
   width: 100%;
@@ -185,9 +194,11 @@ export default {
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .home-button:hover {
   background-color: #9a633d;
 }
+
 .loading {
   text-align: center;
   font-size: 1.2em;

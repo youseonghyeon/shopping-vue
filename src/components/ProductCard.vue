@@ -1,6 +1,6 @@
 <template>
   <div class="product-card" @click="goToProductDetail">
-    <img :src="product.titleImage" alt="상품 이미지" />
+    <img :src="product.titleImage" alt="상품 이미지"/>
     <div class="product-info">
       <h2>{{ product.name }}</h2>
       <!-- 가격 표시 영역 -->
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     goToProductDetail() {
-      this.$router.push({ name: "ProductDetail", params: { id: this.product.id } });
+      this.$router.push({name: "ProductDetail", params: {id: this.product.id}});
     },
     formatPrice(value) {
       const number = Number(value);

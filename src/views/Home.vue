@@ -1,17 +1,17 @@
 <template>
   <div class="container">
-    <HeaderComponent />
-    <Banner />
+    <HeaderComponent/>
+    <Banner/>
     <!-- 가격 정렬 버튼 영역 -->
     <div class="sort-buttons">
       <button
-          @click="changeSort('asc')"
-          :class="{ active: sortOrder === 'asc' }">
+          :class="{ active: sortOrder === 'asc' }"
+          @click="changeSort('asc')">
         Price Ascending
       </button>
       <button
-          @click="changeSort('desc')"
-          :class="{ active: sortOrder === 'desc' }">
+          :class="{ active: sortOrder === 'desc' }"
+          @click="changeSort('desc')">
         Price Descending
       </button>
     </div>
@@ -26,7 +26,7 @@
 
     <!-- 무한 스크롤 트리거 엘리먼트 -->
     <div ref="infiniteScrollTrigger" class="infinite-scroll-trigger"></div>
-    <BottomNav />
+    <BottomNav/>
   </div>
 </template>
 
@@ -35,7 +35,7 @@ import HeaderComponent from '@/components/Header.vue'
 import Banner from '@/components/Banner.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import BottomNav from '@/components/BottomNav.vue'
-import { getRequest } from "@/api/http.js";
+import {getRequest} from "@/api/http.js";
 
 export default {
   name: 'Home',
@@ -73,7 +73,7 @@ export default {
       if (this.isLoading) return;
       this.isLoading = true;
       try {
-        const params = { page, size: 10, sort: `price,${this.sortOrder}` };
+        const params = {page, size: 10, sort: `price,${this.sortOrder}`};
         const response = await getRequest("/products", params);
 
         // 첫 페이지면 초기화, 이후 페이지면 기존 목록에 추가

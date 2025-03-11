@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 
 export default {
   name: 'HeaderComponent',
@@ -20,7 +20,7 @@ export default {
     const goMain = () => {
       router.push('/')
     }
-    return { goCategory , goMain}
+    return {goCategory, goMain}
   }
 }
 </script>

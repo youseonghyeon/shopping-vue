@@ -1,12 +1,12 @@
 <template>
   <div class="product-detail-page">
-    <HeaderComponent title="상품 상세" />
+    <HeaderComponent title="상품 상세"/>
     <div class="detail-content">
       <!-- 제품 정보 카드 -->
       <div class="product-card">
         <div style="color: #959595">== 카테고리 위치 ==</div>
         <div class="image-wrapper">
-          <img :src="product.titleImage" alt="상품 메인 이미지" class="title-image" />
+          <img :src="product.titleImage" alt="상품 메인 이미지" class="title-image"/>
         </div>
         <div class="product-info">
           <h2 class="product-name">{{ product.name }}</h2>
@@ -32,7 +32,7 @@
           <div class="action-section">
             <div class="quantity-selector">
               <button @click="decrementQuantity">-</button>
-              <input type="number" min="1" v-model.number="quantity" />
+              <input v-model.number="quantity" min="1" type="number"/>
               <button @click="incrementQuantity">+</button>
             </div>
             <div class="buttons">
@@ -40,7 +40,7 @@
                 장바구니
               </button>
               <button class="wishlist-btn" @click="toggleWishlist">
-                <font-awesome-icon :icon="isWished ? 'heart' : ['far', 'heart']" />
+                <font-awesome-icon :icon="isWished ? 'heart' : ['far', 'heart']"/>
                 {{ isWished ? '찜 취소' : '찜하기' }}
               </button>
             </div>
@@ -63,7 +63,7 @@
       </div>
 
       <!-- 리뷰 섹션 -->
-      <div class="reviews" v-if="reviews.length">
+      <div v-if="reviews.length" class="reviews">
         <h3>리뷰 ({{ reviews.length }})</h3>
         <div
             v-for="(review, index) in reviews"
@@ -81,19 +81,19 @@
         </div>
       </div>
     </div>
-    <BottomNav />
+    <BottomNav/>
   </div>
 </template>
 
 <script>
 import HeaderComponent from "@/components/Header.vue";
 import BottomNav from "@/components/BottomNav.vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { getRequest, postRequest } from "@/api/http.js";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {getRequest, postRequest} from "@/api/http.js";
 
 export default {
   name: "ProductDetail",
-  components: { HeaderComponent, BottomNav, FontAwesomeIcon },
+  components: {HeaderComponent, BottomNav, FontAwesomeIcon},
   data() {
     return {
       product: {},
@@ -118,9 +118,9 @@ export default {
     this.fetchReviews(); // 실제 구현 시 리뷰 API 연동
     // 임시로 샘플 리뷰:
     this.reviews = [
-      { rating: 5, text: "좋아요!" },
-      { rating: 4, text: "만족스러워요." },
-      { rating: 3, text: "보통입니다." }
+      {rating: 5, text: "좋아요!"},
+      {rating: 4, text: "만족스러워요."},
+      {rating: 3, text: "보통입니다."}
     ];
   },
   methods: {
@@ -200,7 +200,7 @@ export default {
   overflow: hidden;
   border: 1px solid #e0e0e0;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 20px;
 }
 
@@ -336,7 +336,7 @@ export default {
   border: 1px solid #e0e0e0;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .product-description h3 {
@@ -359,7 +359,7 @@ export default {
   border-radius: 8px;
   border: 1px solid #e0e0e0;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .reviews h3 {

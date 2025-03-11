@@ -35,7 +35,7 @@ import OrderItemComponent from '@/components/OrderItemComponent.vue'
 
 export default {
   name: 'OrderComponent',
-  components: { OrderItemComponent },
+  components: {OrderItemComponent},
   props: {
     order: {
       type: Object,
@@ -64,16 +64,19 @@ export default {
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
+
 .order-header {
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
+
 .order-header h3 {
   margin: 0;
   font-size: 1.4em;
   color: #333;
 }
+
 .header-info {
   display: flex;
   justify-content: space-between;
@@ -81,20 +84,24 @@ export default {
   color: #666;
   margin-top: 5px;
 }
+
 .order-details p {
   margin: 5px 0;
   font-size: 1em;
   color: #444;
 }
+
 .price-summary p {
   margin: 3px 0;
 }
+
 .final-payment {
   font-size: 1.1em;
   font-weight: bold;
   color: #b27d4d;
   margin-top: 10px;
 }
+
 .order-items h4 {
   margin: 0 0 10px 0;
   font-size: 1.1em;

@@ -1,6 +1,6 @@
 <template>
   <div class="banner">
-    <img :src="bannerImage" alt="배너 이미지" />
+    <img :src="bannerImage" alt="배너 이미지"/>
   </div>
 </template>
 

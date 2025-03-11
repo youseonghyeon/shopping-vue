@@ -3,25 +3,25 @@
     <ul>
       <li>
         <router-link to="/">
-          <font-awesome-icon icon="home" class="icon" />
+          <font-awesome-icon class="icon" icon="home"/>
           <span class="label">홈</span>
         </router-link>
       </li>
       <li>
         <router-link to="/search">
-          <font-awesome-icon icon="search" class="icon" />
+          <font-awesome-icon class="icon" icon="search"/>
           <span class="label">검색</span>
         </router-link>
       </li>
       <li>
         <router-link to="/mypage">
-          <font-awesome-icon icon="user" class="icon" />
+          <font-awesome-icon class="icon" icon="user"/>
           <span class="label">마이룸</span>
         </router-link>
       </li>
       <li>
         <router-link to="/cart">
-          <font-awesome-icon icon="shopping-cart" class="icon" />
+          <font-awesome-icon class="icon" icon="shopping-cart"/>
           <span class="label">장바구니</span>
         </router-link>
       </li>

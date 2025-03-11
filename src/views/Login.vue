@@ -6,11 +6,11 @@
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="email">이메일</label>
-          <input type="text" id="email" v-model="email" placeholder="이메일 입력" required>
+          <input id="email" v-model="email" placeholder="이메일 입력" required type="text">
         </div>
         <div class="form-group">
           <label for="password">비밀번호</label>
-          <input type="password" id="password" v-model="password" placeholder="비밀번호 입력" required>
+          <input id="password" v-model="password" placeholder="비밀번호 입력" required type="password">
         </div>
         <div class="options">
           <div class="find">
@@ -18,20 +18,20 @@
           </div>
           <div class="remember">
             <label>
-              <input type="checkbox" v-model="rememberMe">
+              <input v-model="rememberMe" type="checkbox">
               로그인 상태 유지
             </label>
           </div>
         </div>
-        <button type="submit" class="login-btn">로그인</button>
+        <button class="login-btn" type="submit">로그인</button>
         <!-- 테스트용 로그인 버튼 -->
-        <button type="button" @click="testUserLogin()" class="login-btn"
-                style="margin-top: 20px; background-color: #b8b8b8;">테스트 계정 로그인
+        <button class="login-btn" style="margin-top: 20px; background-color: #b8b8b8;" type="button"
+                @click="testUserLogin()">테스트 계정 로그인
         </button>
       </form>
       <div class="signup">
         <p>아직 회원이 아니신가요?</p>
-        <a href="/signup" class="signup-btn">회원가입</a>
+        <a class="signup-btn" href="/signup">회원가입</a>
       </div>
     </div>
   </div>

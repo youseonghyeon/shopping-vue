@@ -1,6 +1,6 @@
 <template>
   <div class="product-card" @click="goToDetail">
-    <img :src="product.titleImage" alt="상품 이미지" class="product-image" />
+    <img :src="product.titleImage" alt="상품 이미지" class="product-image"/>
     <div class="product-info">
       <h3 class="product-name">{{ product.name }}</h3>
       <p class="product-price">
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { goToProductDetail } from "@/utils/routeUtils.js";
+import {goToProductDetail} from "@/utils/routeUtils.js";
 
 export default {
   name: "ProductCard",
