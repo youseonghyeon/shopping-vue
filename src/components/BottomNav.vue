@@ -3,26 +3,27 @@
     <ul>
       <li>
         <router-link to="/">
-          <font-awesome-icon class="icon" icon="home"/>
+          <font-awesome-icon class="icon" icon="home" />
           <span class="label">홈</span>
         </router-link>
       </li>
       <li>
         <router-link to="/search">
-          <font-awesome-icon class="icon" icon="search"/>
+          <font-awesome-icon class="icon" icon="search" />
           <span class="label">검색</span>
         </router-link>
       </li>
       <li>
         <router-link to="/mypage">
-          <font-awesome-icon class="icon" icon="user"/>
+          <font-awesome-icon class="icon" icon="user" />
           <span class="label">마이룸</span>
         </router-link>
       </li>
-      <li>
+      <li class="cart">
         <router-link to="/cart">
-          <font-awesome-icon class="icon" icon="shopping-cart"/>
+          <font-awesome-icon class="icon" icon="shopping-cart" />
           <span class="label">장바구니</span>
+          <span v-if="cartCount > 0" class="cart-badge">{{ cartCount }}</span>
         </router-link>
       </li>
     </ul>
@@ -30,9 +31,37 @@
 </template>
 
 <script>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { getRequest } from '@/api/http.js';
+import eventBus from '@/utils/eventBus.js';
+
 export default {
-  name: 'BottomNav'
-}
+  name: 'BottomNav',
+  setup() {
+    const cartCount = ref(0);
+
+    const fetchCartCount = async (newCount) => {
+      try {
+        const response = await getRequest("/cart/count"); // 백엔드 API에서 장바구니 개수 가져오기
+        cartCount.value = response.data || 0;
+      } catch (error) {
+        console.error("장바구니 개수 불러오기 실패:", error);
+        cartCount.value = 0;
+      }
+    };
+
+    onMounted(async () => {
+      await fetchCartCount();
+      eventBus.on('update-cart-count', fetchCartCount);
+    });
+
+    onUnmounted(() => {
+      eventBus.off('update-cart-count', fetchCartCount);
+    });
+
+    return { cartCount };
+  }
+};
 </script>
 
 <style scoped>
@@ -62,6 +91,7 @@ export default {
   text-decoration: none;
   color: #333333;
   font-size: 0.9em;
+  position: relative;
 }
 
 .bottom-nav .icon {
@@ -77,8 +107,18 @@ export default {
   margin-top: 3px;
 }
 
-.icon {
-  color: #000;
-  font-size: 24px;
+/* 장바구니 숫자 표시 */
+.cart-badge {
+  position: absolute;
+  top: -3px;
+  right: -7px;
+  background-color: #007AFF; /* 부드러운 파란색 */
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
 }
 </style>

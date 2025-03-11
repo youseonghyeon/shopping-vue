@@ -112,6 +112,7 @@
 import HeaderComponent from '@/components/Header.vue'
 import BottomNav from '@/components/BottomNav.vue'
 import {getRequest, postRequest} from "@/api/http.js"
+import eventBus from "@/utils/eventBus.js";
 
 export default {
   name: 'Cart',
@@ -163,7 +164,6 @@ export default {
           ...item,
           checked: true
         }));
-        console.log(this.cartItems);
       } catch (e) {
         if (e.status === 403) {
           alert('로그인이 필요합니다.');
@@ -192,8 +192,8 @@ export default {
       }
       if (confirm("선택한 항목을 삭제하시겠습니까?")) {
         let checkedProductIds = this.cartItems.filter(item => item.checked).map(item => item.productId);
-        console.log(checkedProductIds);
         let response = await postRequest('/cart/delete', {productIds: checkedProductIds});
+        eventBus.emit('update-cart-count', 1);
         alert(response.data.message);
         this.cartItems = this.cartItems.filter(item => !item.checked);
       }

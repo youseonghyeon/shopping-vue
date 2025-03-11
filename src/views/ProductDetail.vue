@@ -90,6 +90,7 @@ import HeaderComponent from "@/components/Header.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {getRequest, postRequest} from "@/api/http.js";
+import eventBus from "@/utils/eventBus.js";
 
 export default {
   name: "ProductDetail",
@@ -158,10 +159,15 @@ export default {
           productId: this.product.id,
           quantity: this.quantity
         });
+        eventBus.emit('update-cart-count', 1);
         alert("장바구니에 담았습니다!");
       } catch (error) {
-        console.error("장바구니 담기에 실패했습니다:", error);
-        alert("장바구니 담기에 실패했습니다.");
+        if (error.response && error.response.status === 401 || error.response.status === 403) {
+          alert("로그인이 필요합니다.");
+          this.$router.push("/login");
+        } else {
+          alert("장바구니 담기에 실패했습니다.");
+        }
       }
     },
     toggleWishlist() {

@@ -34,18 +34,22 @@ export const getRequest = async (url, params = {}, useAuthorizationExceptionAler
     }
 }
 
-export const getAsyncRequest = async (url, params = {}) => {
-    let response = await http.get(url, {params});
-    return response.data;
+export const getAsyncRequest = async (url, params = {}, useAuthorizationExceptionAlert = true) => {
+    try {
+        let response = await http.get(url, {params});
+        return response.data;
+    } catch (error) {
+        if (useAuthorizationExceptionAlert && error.response.status === 401 || error.response.status === 403) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '/login';
+        }
+        throw error;
+    }
 }
 
-export const postRequest = (url, data = {}) => {
-    return http.post(url, data)
-}
+export const postRequest = async (url, data = {}, useAuthorizationExceptionAlert = true) => {
+    return await http.post(url, data)
 
-export const postAsyncRequest = async (url, data = {}) => {
-    let response = await http.post(url, data);
-    return response.data;
 }
 
 export default http

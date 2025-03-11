@@ -230,7 +230,10 @@ export default {
     async loadPoints() {
       try {
         const response = await getRequest("/me", {});
-        this.availablePoints = response.data.points;
+        const {username, points, phone } = response.data;
+        this.shippingInfo.recipientName = username;
+        this.shippingInfo.phone = phone;
+        this.availablePoints = points;
       } catch (error) {
         console.error("포인트 정보 로드 실패:", error);
       }
