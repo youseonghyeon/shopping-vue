@@ -82,6 +82,7 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0);
     // 페이지 로드시, 무한 스크롤 초기화
     this.initIntersectionObserver();
   },

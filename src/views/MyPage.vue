@@ -51,6 +51,7 @@ export default {
     };
   },
   async mounted() {
+    window.scrollTo(0, 0);
     // 마이페이지 API를 통해 로그인 상태, 포인트, 사용자 정보를 가져옴
     let response = await getRequest('/mypage', null, false);
     const {loggedIn, point, role, username} = response.data;
