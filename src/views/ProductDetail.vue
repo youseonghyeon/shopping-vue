@@ -102,6 +102,7 @@ export default {
   created() {
     window.scrollTo(0, 0);
     this.fetchProduct();
+    this.fetchWishlistInProduct();
     this.fetchReviews(); // 실제 구현 시 리뷰 API 연동
     // 임시 샘플 리뷰:
     this.reviews = [
@@ -120,6 +121,15 @@ export default {
       } catch (error) {
         console.error("상품 정보를 불러오지 못했습니다:", error);
       }
+    },
+    async fetchWishlistInProduct() {
+      try {
+        let response = await getRequest('/wishlist/exist', {productId: this.$route.params.id});
+        this.isWished = response.data.exist;
+      } catch (error) {
+        console.log('찜 여부 확인에 실패했습니다:', error);
+      }
+
     },
     async fetchReviews() {
       const productId = this.$route.params.id;

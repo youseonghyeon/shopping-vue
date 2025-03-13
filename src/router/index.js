@@ -2,6 +2,11 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
+        path: '/release-note',
+        name: 'ReleaseNote',
+        component: () => import('@/views/ReleaseNote.vue')
+    },
+    {
         path: '/',
         name: 'Home',
         component: () => import('@/views/Home.vue')
@@ -63,8 +68,8 @@ const routes = [
     },
     {
         path: '/wishlist',
-        name: 'WishList',
-        component: () => import('@/views/WishList.vue')
+        name: 'Wishlist',
+        component: () => import('@/views/Wishlist.vue')
     }
 ]
 const router = createRouter({

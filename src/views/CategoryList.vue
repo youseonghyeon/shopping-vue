@@ -3,6 +3,9 @@
     <HeaderComponent/>
     <h2>카테고리 선택</h2>
     <ul class="category-list">
+      <li>
+        <a href="/release-note" class="logo" style="font-size: 20px;">Release Note</a>
+      </li>
       <li v-for="(category, index) in categories" :key="index">
         <a href="#">{{ category }}</a>
       </li>

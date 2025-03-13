@@ -64,7 +64,7 @@ export default {
       this.$router.push('/order-list');
     },
     goWishList() {
-      alert('찜한상품 페이지로 이동');
+      this.$router.push('/wishlist');
     },
     goRecentView() {
       alert('최근 본 상품 페이지로 이동');
