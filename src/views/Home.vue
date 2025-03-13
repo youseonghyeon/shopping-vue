@@ -2,18 +2,39 @@
   <div class="container">
     <HeaderComponent/>
     <Banner/>
-    <!-- 가격 정렬 버튼 영역 -->
-    <div class="sort-buttons">
-      <button
-          :class="{ active: sortOrder === 'asc' }"
-          @click="changeSort('asc')">
-        Price Ascending
-      </button>
-      <button
-          :class="{ active: sortOrder === 'desc' }"
-          @click="changeSort('desc')">
-        Price Descending
-      </button>
+
+    <!-- 정렬 옵션 영역 -->
+    <div class="sort-options">
+      <!-- 가격 정렬 그룹 -->
+      <div class="sort-group">
+        <button
+            :class="{ active: sortCriteria === 'priceAsc' }"
+            @click="changeSort('priceAsc')"
+        >
+          가격 오름차순
+        </button>
+        <button
+            :class="{ active: sortCriteria === 'priceDesc' }"
+            @click="changeSort('priceDesc')"
+        >
+          가격 내림차순
+        </button>
+      </div>
+      <!-- 평점/추천 정렬 그룹 -->
+      <div class="sort-group">
+        <button
+            :class="{ active: sortCriteria === 'rating' }"
+            @click="changeSort('rating')"
+        >
+          평점 순
+        </button>
+        <button
+            :class="{ active: sortCriteria === 'recommended' }"
+            @click="changeSort('recommended')"
+        >
+          추천 순
+        </button>
+      </div>
     </div>
 
     <section class="product-list">
@@ -51,7 +72,25 @@ export default {
       page: 0,
       totalPages: 1,
       isLoading: false,
-      sortOrder: 'asc'
+      // 기본 정렬은 가격 오름차순
+      sortCriteria: 'priceAsc'
+    }
+  },
+  computed: {
+    // 선택한 정렬 기준에 따른 쿼리 파라미터 생성
+    sortParam() {
+      switch (this.sortCriteria) {
+        case 'priceAsc':
+          return 'price,asc';
+        case 'priceDesc':
+          return 'price,desc';
+        case 'rating':
+          return 'rating,desc';
+        case 'recommended':
+          return 'recommended,desc';
+        default:
+          return 'price,asc';
+      }
     }
   },
   mounted() {
@@ -63,7 +102,6 @@ export default {
     });
   },
   beforeDestroy() {
-    // Intersection Observer 해제
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -73,10 +111,8 @@ export default {
       if (this.isLoading) return;
       this.isLoading = true;
       try {
-        const params = {page, size: 10, sort: `price,${this.sortOrder}`};
+        const params = {page, size: 10, sort: this.sortParam, sortType: this.sortCriteria};
         const response = await getRequest("/products", params);
-
-        // 첫 페이지면 초기화, 이후 페이지면 기존 목록에 추가
         this.products = page === 0 ? response.data.content : this.products.concat(response.data.content);
         this.page = response.data.page.number;
         this.totalPages = response.data.page.totalPages;
@@ -86,10 +122,10 @@ export default {
         this.isLoading = false;
       }
     },
-    changeSort(order) {
-      if (this.sortOrder === order) return;
-      this.sortOrder = order;
-      // 정렬 변경 시 데이터 초기화 후 첫 페이지부터 다시 로딩
+    changeSort(criteria) {
+      if (this.sortCriteria === criteria) return;
+      this.sortCriteria = criteria;
+      // 정렬 변경 시 페이지 정보 초기화 후 첫 페이지부터 다시 로딩
       this.page = 0;
       this.totalPages = 1;
       this.products = [];
@@ -101,7 +137,6 @@ export default {
         rootMargin: '0px',
         threshold: 0.1
       };
-
       this.observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting && this.page < this.totalPages - 1 && !this.isLoading) {
@@ -109,7 +144,6 @@ export default {
           }
         });
       }, options);
-
       const triggerElement = this.$refs.infiniteScrollTrigger;
       if (triggerElement) {
         this.observer.observe(triggerElement);
@@ -124,24 +158,31 @@ export default {
 <style scoped>
 .container {
   max-width: 600px;
-  padding-bottom: 60px; /* 하단 고정 네비게이션 높이만큼 여백 추가 */
+  padding-bottom: 60px;
 }
 
-.sort-buttons {
+/* 정렬 옵션 영역 */
+.sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.sort-group {
   display: flex;
   justify-content: center;
-  margin: 10px 0;
   gap: 10px;
 }
 
-.sort-buttons button {
+.sort-group button {
   padding: 6px 12px;
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
 }
 
-.sort-buttons button.active {
+.sort-group button.active {
   border-color: #007bff;
   color: #007bff;
   font-weight: bold;
@@ -156,7 +197,6 @@ export default {
   padding: 10px;
 }
 
-/* 무한 스크롤 트리거 엘리먼트 (화면에 보이지 않게) */
 .infinite-scroll-trigger {
   height: 1px;
 }

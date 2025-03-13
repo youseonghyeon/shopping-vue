@@ -124,7 +124,7 @@ export default {
     },
     async fetchWishlistInProduct() {
       try {
-        let response = await getRequest('/wishlist/exist', {productId: this.$route.params.id});
+        let response = await getRequest('/wishlist/exist', {productId: this.$route.params.id}, false);
         this.isWished = response.data.exist;
       } catch (error) {
         console.log('찜 여부 확인에 실패했습니다:', error);
