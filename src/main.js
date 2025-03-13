@@ -14,11 +14,13 @@ import {
     faStar as fasStar,
     faUser
 } from '@fortawesome/free-solid-svg-icons';
-import {faHeart as fasHeart, faStar as farStar} from '@fortawesome/free-regular-svg-icons';
+
+import {faHeart as fasHeart, faStar as farStar, faFrown} from '@fortawesome/free-regular-svg-icons';
+
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 // 아이콘들을 라이브러리에 추가
-library.add(fasStar, farStar, farHeart, fasHeart, faSearch, faHome, faUser, faShoppingCart);
+library.add(fasStar, farStar, farHeart, fasHeart, faSearch, faHome, faUser, faShoppingCart, faFrown);
 
 createApp(App)
     .use(router)

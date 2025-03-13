@@ -61,6 +61,11 @@ const routes = [
         name: 'OrderConfirmation',
         component: () => import('@/views/OrderConfirmation.vue')
     },
+    {
+        path: '/wishlist',
+        name: 'WishList',
+        component: () => import('@/views/WishList.vue')
+    }
 ]
 const router = createRouter({
     history: createWebHistory(),

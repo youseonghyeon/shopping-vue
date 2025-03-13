@@ -1,18 +1,17 @@
 <template>
   <div class="product-detail-page">
-    <HeaderComponent title="상품 상세"/>
+    <HeaderComponent title="상품 상세" />
     <div class="detail-content">
       <!-- 제품 정보 카드 -->
       <div class="product-card">
         <div style="color: #959595">== 카테고리 위치 ==</div>
         <div class="image-wrapper">
-          <img :src="product.titleImage" alt="상품 메인 이미지" class="title-image"/>
+          <img :src="product.titleImage" alt="상품 메인 이미지" class="title-image" />
         </div>
         <div class="product-info">
           <h2 class="product-name">{{ product.name }}</h2>
           <!-- 가격/할인 정보 -->
           <div class="pricing">
-            <!-- 할인 있는 경우 -->
             <template v-if="hasDiscount">
               <div class="discount-price">
                 <span class="final-price">{{ formatPrice(product.discountedPrice) }}</span>
@@ -22,7 +21,6 @@
                 <span class="discount-badge">{{ discountPercent }}% 할인</span>
               </div>
             </template>
-            <!-- 할인 없는 경우 -->
             <template v-else>
               <span class="final-price">{{ formatPrice(product.price) }}</span>
             </template>
@@ -32,15 +30,16 @@
           <div class="action-section">
             <div class="quantity-selector">
               <button @click="decrementQuantity">-</button>
-              <input v-model.number="quantity" min="1" type="number"/>
+              <input v-model.number="quantity" min="1" type="number" />
               <button @click="incrementQuantity">+</button>
             </div>
             <div class="buttons">
               <button class="add-to-cart-btn" @click="addToCart">
                 장바구니
               </button>
-              <button class="wishlist-btn" @click="toggleWishlist">
-                <font-awesome-icon :icon="isWished ? 'heart' : ['far', 'heart']"/>
+              <!-- 토글 버튼에 동적으로 "selected" 클래스를 적용 -->
+              <button :class="['wishlist-btn', { selected: isWished }]" @click="toggleWishlist">
+                <font-awesome-icon :icon="isWished ? 'heart' : ['far', 'heart']" />
                 {{ isWished ? '찜 취소' : '찜하기' }}
               </button>
             </div>
@@ -51,25 +50,14 @@
       <!-- 상세 설명 섹션 -->
       <div class="product-description">
         <h3>상품정보</h3>
-        <!-- 세로로 긴 이미지가 있을 경우 -->
-        <img
-            v-if="product.detailImage"
-            :src="product.detailImage"
-            alt="상세 이미지"
-            class="detail-image"
-        />
-        <!-- 텍스트 설명 -->
+        <img v-if="product.detailImage" :src="product.detailImage" alt="상세 이미지" class="detail-image" />
         <p v-else>{{ product.description }}</p>
       </div>
 
       <!-- 리뷰 섹션 -->
       <div v-if="reviews.length" class="reviews">
         <h3>리뷰 ({{ reviews.length }})</h3>
-        <div
-            v-for="(review, index) in reviews"
-            :key="index"
-            class="review-item"
-        >
+        <div v-for="(review, index) in reviews" :key="index" class="review-item">
           <div class="star-rating">
             <font-awesome-icon
                 v-for="n in 5"
@@ -81,20 +69,20 @@
         </div>
       </div>
     </div>
-    <BottomNav/>
+    <BottomNav />
   </div>
 </template>
 
 <script>
 import HeaderComponent from "@/components/Header.vue";
 import BottomNav from "@/components/BottomNav.vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {getRequest, postRequest} from "@/api/http.js";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { getRequest, postRequest } from "@/api/http.js";
 import eventBus from "@/utils/eventBus.js";
 
 export default {
   name: "ProductDetail",
-  components: {HeaderComponent, BottomNav, FontAwesomeIcon},
+  components: { HeaderComponent, BottomNav, FontAwesomeIcon },
   data() {
     return {
       product: {},
@@ -108,20 +96,18 @@ export default {
       return this.product.discountRate && this.product.discountRate > 0;
     },
     discountPercent() {
-      return this.hasDiscount
-          ? (this.product.discountRate * 100).toFixed(0)
-          : 0;
+      return this.hasDiscount ? (this.product.discountRate * 100).toFixed(0) : 0;
     }
   },
   created() {
     window.scrollTo(0, 0);
     this.fetchProduct();
     this.fetchReviews(); // 실제 구현 시 리뷰 API 연동
-    // 임시로 샘플 리뷰:
+    // 임시 샘플 리뷰:
     this.reviews = [
-      {rating: 5, text: "좋아요!"},
-      {rating: 4, text: "만족스러워요."},
-      {rating: 3, text: "보통입니다."}
+      { rating: 5, text: "좋아요!" },
+      { rating: 4, text: "만족스러워요." },
+      { rating: 3, text: "보통입니다." }
     ];
   },
   methods: {
@@ -138,7 +124,7 @@ export default {
     async fetchReviews() {
       const productId = this.$route.params.id;
       try {
-        // 실제 리뷰 API가 있다면 여기서 호출
+        // 실제 리뷰 API 호출 (주석 처리된 예시)
         // const response = await getRequest(`/products/${productId}/reviews`);
         // this.reviews = response.data;
       } catch (error) {
@@ -162,7 +148,7 @@ export default {
         eventBus.emit('update-cart-count', 1);
         alert("장바구니에 담았습니다!");
       } catch (error) {
-        if (error.response && error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           alert("로그인이 필요합니다.");
           this.$router.push("/login");
         } else {
@@ -170,11 +156,20 @@ export default {
         }
       }
     },
-    toggleWishlist() {
-      // 찜하기 로직 (백엔드 연동 필요)
-      // 예: POST /wishlist/add or /wishlist/remove
-      this.isWished = !this.isWished;
-      alert(this.isWished ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다.");
+    async toggleWishlist() {
+      try {
+        let requestUrl = this.isWished ? '/wishlist/delete' : '/wishlist/create';
+        let response = await postRequest(requestUrl, { productId: this.product.id });
+        if (response.data.success) {
+          this.isWished = !this.isWished;
+          alert(this.isWished ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다.");
+        }
+      } catch (error) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          alert('로그인이 필요합니다.');
+          window.location.href = '/login';
+        }
+      }
     },
     formatPrice(value) {
       const number = Number(value);
@@ -194,7 +189,7 @@ export default {
 .detail-content {
   max-width: 800px;
   margin: 20px auto;
-  padding: 0 0;
+  padding: 0;
 }
 
 /* 상품 카드 전체 래퍼 */
@@ -315,19 +310,32 @@ export default {
   font-size: 0.9em;
 }
 
+/* 장바구니 버튼 디자인 */
 .add-to-cart-btn {
   background-color: #b27d4d;
   color: #fff;
 }
 
+.add-to-cart-btn:hover {
+  background-color: #9a633d;
+}
+
+/* 찜하기 버튼 기본 디자인 */
 .wishlist-btn {
   background-color: #f5f5f5;
   color: #333;
+  border: 1px solid #ccc;
 }
 
-.add-to-cart-btn:hover,
+/* 찜하기 버튼 선택된 상태 */
+.wishlist-btn.selected {
+  background-color: #459cff;
+  color: #fff;
+  border: 1px solid #007AFF;
+}
+
 .wishlist-btn:hover {
-  background-color: #9a633d;
+  background-color: #d0e8ff;
 }
 
 .buttons {
