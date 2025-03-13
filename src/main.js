@@ -12,15 +12,16 @@ import {
     faSearch,
     faShoppingCart,
     faStar as fasStar,
-    faUser
+    faUser,
+    faFrown as faFrown
 } from '@fortawesome/free-solid-svg-icons';
 
-import {faHeart as fasHeart, faStar as farStar, faFrown} from '@fortawesome/free-regular-svg-icons';
+import {faHeart as fasHeart, faStar as farStar, faFrown as farFrown} from '@fortawesome/free-regular-svg-icons';
 
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 // 아이콘들을 라이브러리에 추가
-library.add(fasStar, farStar, farHeart, fasHeart, faSearch, faHome, faUser, faShoppingCart, faFrown);
+library.add(fasStar, farStar, farHeart, fasHeart, faSearch, faHome, faUser, faShoppingCart, faFrown, farFrown);
 
 createApp(App)
     .use(router)
