@@ -25,8 +25,8 @@
       <div class="menu-item" @click="goOrderList">주문목록</div>
       <div class="menu-item" @click="goWishList">찜한상품</div>
       <div class="menu-item" @click="goRecentView">최근 본 상품</div>
-      <div class="menu-item" @click="goCancelReturnExchange">취소/반품/교환목록</div>
-      <div class="menu-item" @click="goReviewManagement">리뷰관리</div>
+      <div class="menu-item" @click="goCancelReturnExchange">취소/반품/교환목록 (제작중)</div>
+      <div class="menu-item" @click="goReviewManagement">리뷰관리 (제작중)</div>
     </div>
     <!-- 하단 네비게이션 -->
     <BottomNav/>
@@ -68,13 +68,13 @@ export default {
       this.$router.push('/wishlist');
     },
     goRecentView() {
-      alert('최근 본 상품 페이지로 이동');
+      this.$router.push('/recently-viewed-products');
     },
     goCancelReturnExchange() {
-      alert('취소/반품/교환목록 페이지로 이동');
+      alert('기능이 없습니다.');
     },
     goReviewManagement() {
-      alert('리뷰관리 페이지로 이동');
+      alert('기능이 없습니다.');
     },
     goLogin() {
       this.$router.push('/login');

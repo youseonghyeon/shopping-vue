@@ -15,6 +15,9 @@
       </p>
       <p><strong>총 가격:</strong> {{ formatCurrency(orderItem.totalPrice) }}</p>
     </div>
+    <div class="review-btn">
+      <button @click="writeReview">리뷰 작성하기</button>
+    </div>
   </div>
 </template>
 
@@ -31,6 +34,10 @@ export default {
     formatCurrency(value) {
       const number = Number(value);
       return number.toLocaleString() + '원';
+    },
+    writeReview() {
+      // 제품 ID를 파라미터로 전달하면서 리뷰 작성 페이지로 이동
+      this.$router.push({ name: 'ReviewWrite', query: { productId: this.orderItem.productResponse.id } });
     }
   }
 }
@@ -55,5 +62,24 @@ export default {
   margin: 4px 0;
   font-size: 0.95em;
   color: #555;
+}
+
+.review-btn {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.review-btn button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.review-btn button:hover {
+  background-color: #0056b3;
 }
 </style>

@@ -21,14 +21,16 @@
         </template>
       </div>
       <!-- 별점 표시 영역 (샘플: 4점) -->
-      <div class="rating">
-        <font-awesome-icon
-            v-for="n in 5"
-            :key="n"
-            :icon="n <= sampleRating ? 'star' : ['far', 'star']"
-        />
-        <p style="color: #5a5a5a; font-size: 12px;">(5)</p>
-      </div>
+      <template v-if="reviewCount > 0">
+        <div class="rating">
+          <font-awesome-icon
+              v-for="n in 5"
+              :key="n"
+              :icon="n <= ratingAverage ? 'star' : ['far', 'star']"
+          />
+          <p style="color: #5a5a5a; font-size: 12px;">({{ reviewCount }})</p>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -50,8 +52,11 @@ export default {
       return this.hasDiscount ? (this.product.discountRate * 100).toFixed(0) : 0;
     },
     // 샘플 별점: 4점 (추후 실제 데이터로 대체 가능)
-    sampleRating() {
-      return 4;
+    ratingAverage() {
+      return this.product.ratingAverage;
+    },
+    reviewCount() {
+      return this.product.reviewCount;
     }
   },
   methods: {

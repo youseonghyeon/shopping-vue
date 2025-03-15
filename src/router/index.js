@@ -70,6 +70,16 @@ const routes = [
         path: '/wishlist',
         name: 'Wishlist',
         component: () => import('@/views/Wishlist.vue')
+    },
+    {
+        path: '/review-write',
+        name: 'ReviewWrite',
+        component: () => import('@/views/ReviewWrite.vue')
+    },
+    {
+        path: '/recently-viewed-products',
+        name: 'RecentlyViewedProducts',
+        component: () => import('@/views/RecentlyViewedProducts.vue')
     }
 ]
 const router = createRouter({

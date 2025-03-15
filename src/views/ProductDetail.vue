@@ -66,7 +66,7 @@
                 :icon="n <= review.rating ? 'star' : ['far', 'star']"
             />
           </div>
-          <p class="review-text">{{ review.text }}</p>
+          <p class="review-text">{{ review.content }}</p>
         </div>
       </div>
     </div>
@@ -104,13 +104,7 @@ export default {
     window.scrollTo(0, 0);
     this.fetchProduct();
     this.fetchWishlistInProduct();
-    this.fetchReviews(); // 실제 구현 시 리뷰 API 연동
-    // 임시 샘플 리뷰:
-    this.reviews = [
-      { rating: 5, text: "좋아요!" },
-      { rating: 4, text: "만족스러워요." },
-      { rating: 3, text: "보통입니다." }
-    ];
+    this.saveRecentlyViewed(); // 페이지 진입 시 최근 본 상품 저장
   },
   methods: {
     async fetchProduct() {
@@ -119,27 +113,17 @@ export default {
         const response = await getRequest("/products/" + productId);
         this.product = response.data;
         this.product.detailImage = 'https://thumbnail7.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2024/11/08/13/6/063e3f93-7b4d-4b13-9079-24b95eecdfaa.jpg';
+        this.reviews = response.data.reviews;
       } catch (error) {
         console.error("상품 정보를 불러오지 못했습니다:", error);
       }
     },
     async fetchWishlistInProduct() {
       try {
-        let response = await getRequest('/wishlist/exist', {productId: this.$route.params.id}, false);
+        let response = await getRequest('/wishlist/exist', { productId: this.$route.params.id }, false);
         this.isWished = response.data.exist;
       } catch (error) {
         this.isWished = false;
-      }
-
-    },
-    async fetchReviews() {
-      const productId = this.$route.params.id;
-      try {
-        // 실제 리뷰 API 호출 (주석 처리된 예시)
-        // const response = await getRequest(`/products/${productId}/reviews`);
-        // this.reviews = response.data;
-      } catch (error) {
-        console.error("리뷰 정보를 불러오지 못했습니다:", error);
       }
     },
     incrementQuantity() {
@@ -185,6 +169,20 @@ export default {
     formatPrice(value) {
       const number = Number(value);
       return number.toLocaleString() + "원";
+    },
+    // 최근 본 상품을 localStorage에 저장하는 메서드
+    saveRecentlyViewed() {
+      const key = "recentlyViewedProducts";
+      const productId = this.$route.params.id;
+      let products = JSON.parse(localStorage.getItem(key)) || [];
+      // 중복 제거: 이미 존재하면 제거하고 새롭게 앞에 추가
+      products = products.filter(id => id !== productId);
+      products.unshift(productId);
+      // 최대 10개까지만 저장
+      if (products.length > 10) {
+        products = products.slice(0, 10);
+      }
+      localStorage.setItem(key, JSON.stringify(products));
     }
   }
 };
