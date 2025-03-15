@@ -30,7 +30,6 @@ export const getRequest = async (url, params = {}, useAuthorizationExceptionAler
             alert('로그인이 필요합니다.');
             window.location.href = '/login';
         }
-        console.error("GET 요청 오류:", error);
     }
 }
 

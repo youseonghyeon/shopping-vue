@@ -45,7 +45,6 @@ export default {
         const response = await getRequest("/cart/count"); // 백엔드 API에서 장바구니 개수 가져오기
         cartCount.value = response.data || 0;
       } catch (error) {
-        console.error("장바구니 개수 불러오기 실패:", error);
         cartCount.value = 0;
       }
     };

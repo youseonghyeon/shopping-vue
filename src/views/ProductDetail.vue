@@ -14,15 +14,16 @@
           <div class="pricing">
             <template v-if="hasDiscount">
               <div class="discount-price">
-                <span class="final-price">{{ formatPrice(product.discountedPrice) }}</span>
+                <span class="final-price">{{ formatPrice(product.discountedPrice * quantity) }}</span>
                 <span class="original-price">
-                  <del>{{ formatPrice(product.price) }}</del>
+                  <del>{{ formatPrice(product.price * quantity) }}</del>
                 </span>
                 <span class="discount-badge">{{ discountPercent }}% 할인</span>
               </div>
             </template>
+
             <template v-else>
-              <span class="final-price">{{ formatPrice(product.price) }}</span>
+              <span class="final-price">{{ formatPrice(product.price * quantity) }}</span>
             </template>
           </div>
 
@@ -127,7 +128,7 @@ export default {
         let response = await getRequest('/wishlist/exist', {productId: this.$route.params.id}, false);
         this.isWished = response.data.exist;
       } catch (error) {
-        console.log('찜 여부 확인에 실패했습니다:', error);
+        this.isWished = false;
       }
 
     },
