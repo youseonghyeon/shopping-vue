@@ -9,10 +9,7 @@
         <div v-if="isLoggedIn">
           <div class="user-name">{{ userName }}님</div>
           <div class="user-point">포인트: {{ userPoint }}P</div>
-          <button class="logout-btn" @click="handleLogout">로그아웃</button>
         </div>
-
-
         <!-- 로그아웃 상태 -->
         <div v-else class="login-prompt" @click="goLogin">
           <h3>로그인을 해주세요 ></h3>
@@ -78,16 +75,6 @@ export default {
     },
     goLogin() {
       this.$router.push('/login');
-    },
-    async handleLogout() {
-      try {
-        const currentPath = window.location.pathname; // 현재 경로 가져오기
-        const res = await postRequest('/logout', {redirectUrl: currentPath});
-        const {redirectUrl} = res.data;
-        window.location.href = redirectUrl;
-      } catch (err) {
-        console.error('로그아웃 에러:', err);
-      }
     }
   },
 };

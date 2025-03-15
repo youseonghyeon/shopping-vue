@@ -2,6 +2,10 @@
   <div class="footer-info">
     <!-- 상단 메뉴 영역 -->
     <ul class="footer-links">
+      <!-- 로그아웃 버튼 추가 -->
+      <li>
+        <button class="logout-btn" @click="handleLogout">로그아웃</button>
+      </li>
       <li><a href="#">회사소개</a></li>
       <li><a href="#">이용약관</a></li>
       <li><a href="#">개인정보처리방침</a></li>
@@ -26,8 +30,22 @@
 </template>
 
 <script>
+import { postRequest } from '@/api/http.js';
+
 export default {
-  name: "FooterInfo"
+  name: "FooterInfo",
+  methods: {
+    async handleLogout() {
+      try {
+        const currentPath = window.location.pathname;
+        const res = await postRequest('/logout', { redirectUrl: currentPath });
+        const { redirectUrl } = res.data;
+        window.location.href = redirectUrl;
+      } catch (err) {
+        console.error('로그아웃 에러:', err);
+      }
+    }
+  }
 }
 </script>
 
@@ -61,6 +79,20 @@ export default {
 }
 
 .footer-links a:hover {
+  text-decoration: underline;
+}
+
+/* 로그아웃 버튼 스타일 */
+.logout-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.9em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.logout-btn:hover {
   text-decoration: underline;
 }
 
