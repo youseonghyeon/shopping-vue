@@ -3,38 +3,32 @@
     <HeaderComponent/>
     <Banner/>
 
-    <!-- 정렬 옵션 영역 -->
+    <!-- 정렬 옵션 영역 (한 줄로 표시) -->
     <div class="sort-options">
-      <!-- 가격 정렬 그룹 -->
-      <div class="sort-group">
-        <button
-            :class="{ active: sortCriteria === 'priceAsc' }"
-            @click="changeSort('priceAsc')"
-        >
-          가격 오름차순
-        </button>
-        <button
-            :class="{ active: sortCriteria === 'priceDesc' }"
-            @click="changeSort('priceDesc')"
-        >
-          가격 내림차순
-        </button>
-      </div>
-      <!-- 평점/추천 정렬 그룹 -->
-      <div class="sort-group">
-        <button
-            :class="{ active: sortCriteria === 'rating' }"
-            @click="changeSort('rating')"
-        >
-          평점 순
-        </button>
-        <button
-            :class="{ active: sortCriteria === 'recommended' }"
-            @click="changeSort('recommended')"
-        >
-          추천 순
-        </button>
-      </div>
+      <button
+          :class="{ active: sortCriteria === 'priceAsc' }"
+          @click="changeSort('priceAsc')"
+      >
+        가격 오름차순
+      </button>
+      <button
+          :class="{ active: sortCriteria === 'priceDesc' }"
+          @click="changeSort('priceDesc')"
+      >
+        가격 내림차순
+      </button>
+      <button
+          :class="{ active: sortCriteria === 'rating' }"
+          @click="changeSort('rating')"
+      >
+        평점 순
+      </button>
+      <button
+          :class="{ active: sortCriteria === 'recommended' }"
+          @click="changeSort('recommended')"
+      >
+        쇼핑몰 랭킹순
+      </button>
     </div>
 
     <section class="product-list">
@@ -96,7 +90,6 @@ export default {
   mounted() {
     window.scrollTo(0, 0);
     this.fetchProducts(0);
-    // DOM 업데이트 후 observer 초기화
     this.$nextTick(() => {
       this.initIntersectionObserver();
     });
@@ -161,30 +154,31 @@ export default {
   padding-bottom: 60px;
 }
 
-/* 정렬 옵션 영역 */
+/* 정렬 옵션 영역 (한 줄 배치 및 개선된 디자인) */
 .sort-options {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   margin: 10px 0;
 }
 
-.sort-group {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.sort-group button {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  background-color: #fff;
+.sort-options button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.sort-group button.active {
-  border-color: #007bff;
-  color: #007bff;
+.sort-options button:hover {
+  background-color: #e0e0e0;
+}
+
+.sort-options button.active {
+  background-color: #007bff;
+  color: #fff;
   font-weight: bold;
 }
 
