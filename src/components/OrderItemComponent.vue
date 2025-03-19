@@ -37,7 +37,7 @@ export default {
     },
     writeReview() {
       // 제품 ID를 파라미터로 전달하면서 리뷰 작성 페이지로 이동
-      this.$router.push({ name: 'ReviewWrite', query: { productId: this.orderItem.productResponse.id } });
+      this.$router.push({ name: 'ReviewWrite', query: { productId: this.orderItem.productResponse.id, orderItemId: this.orderItem.id } });
     }
   }
 }

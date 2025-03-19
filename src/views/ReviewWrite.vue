@@ -68,7 +68,9 @@ export default {
   created() {
     // 라우트 쿼리에서 productId 추출
     this.productId = this.$route.query.productId;
+    this.orderItemId = this.$route.query.orderItemId;
     this.fetchProduct();
+    console.log(this.orderItemId)
   },
   methods: {
     setRating(star) {
@@ -85,6 +87,7 @@ export default {
     async submitReview() {
       try {
         await postRequest('/reviews/create', {
+          orderItemId: this.orderItemId,
           productId: this.productId,
           rating: this.review.rating,
           content: this.review.content
