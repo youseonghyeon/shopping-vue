@@ -1,13 +1,13 @@
 <template>
   <div class="review-page">
-    <HeaderComponent />
+    <HeaderComponent/>
     <div class="content">
       <h2>리뷰 작성</h2>
       <div class="review-form-container">
         <div class="review-form">
           <!-- 상품 정보 영역 -->
           <div class="form-group product-info">
-            <img :src="product.titleImage" alt="상품 이미지" class="product-image" />
+            <img :src="product.titleImage" alt="상품 이미지" class="product-image"/>
             <span class="product-name">{{ product.name }}</span>
           </div>
           <div class="form-group">
@@ -20,7 +20,7 @@
                   :class="{ filled: star <= review.rating }"
                   @click="setRating(star)"
               >
-                <font-awesome-icon :icon="['fas', 'star']" />
+                <font-awesome-icon :icon="['fas', 'star']"/>
               </span>
             </div>
           </div>
@@ -32,14 +32,14 @@
         </div>
       </div>
     </div>
-    <BottomNav />
+    <BottomNav/>
   </div>
 </template>
 
 <script>
 import HeaderComponent from '@/components/Header.vue';
 import BottomNav from '@/components/BottomNav.vue';
-import { getRequest, postRequest } from '@/api/http.js';
+import {getRequest, postRequest} from '@/api/http.js';
 
 export default {
   name: 'ReviewWrite',
@@ -93,8 +93,12 @@ export default {
           content: this.review.content
         });
         alert('리뷰가 성공적으로 등록되었습니다!');
-        this.$router.push({ name: 'ProductDetail', params: { id: this.productId } });
+        this.$router.push({name: 'ProductDetail', params: {id: this.productId}});
       } catch (error) {
+        if (error.response.status === 400) {
+          alert(error.response.data.message)
+          return;
+        }
         console.error(error);
         alert('리뷰 등록에 실패했습니다.');
       }
