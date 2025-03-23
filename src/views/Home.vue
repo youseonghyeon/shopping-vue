@@ -3,6 +3,21 @@
     <HeaderComponent/>
     <Banner/>
 
+
+    <!-- 선착순 이벤트 영역 -->
+    <section class="event-section">
+      <!-- Vue Router를 이용한 내부 링크 -->
+      <router-link to="/event/ticket/apply" class="event-banner-link">
+        <img
+            src="@/assets/event-banner.png"
+            alt="선착순 10,000 포인트 이벤트"
+            class="event-banner-image"
+        />
+        <p class="event-banner-text">로그인하고 쿠폰 받기</p>
+      </router-link>
+    </section>
+
+
     <!-- 정렬 옵션 영역 (한 줄로 표시) -->
     <div class="sort-options">
       <button
@@ -193,5 +208,34 @@ export default {
 
 .infinite-scroll-trigger {
   height: 1px;
+}
+
+.event-section {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* 이미지가 버튼처럼 클릭되도록 (배경/테두리는 없앰) */
+.event-banner-link {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* 이미지 크기 자동 조절 */
+.event-banner-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* 이미지 아래쪽 텍스트 */
+.event-banner-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
 }
 </style>
