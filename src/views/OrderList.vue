@@ -58,12 +58,19 @@ export default {
       if (this.isLoading) return;
       this.isLoading = true;
       const params = {page, size: 10};
-
-      const response = await getRequest("/order", params);
-
-      this.orders = page === 0 ? response.data.content : this.orders.concat(response.data.content);
-      this.page = response.data.page.number;
-      this.totalPages = response.data.page.totalPages;
+      try {
+        const response = await getRequest("/order", params);
+        this.orders = page === 0 ? response.data.content : this.orders.concat(response.data.content);
+        this.page = response.data.page.number;
+        this.totalPages = response.data.page.totalPages;
+      } catch (error) {
+        if (error.status === 403) {
+          alert("로그인이 필요합니다.");
+          this.$router.push("/login");
+        } else {
+          console.error("주문 목록 불러오기 실패:", error);
+        }
+      }
     },
     initIntersectionObserver() {
       const options = {
