@@ -80,6 +80,11 @@ const routes = [
         path: '/recently-viewed-products',
         name: 'RecentlyViewedProducts',
         component: () => import('@/views/RecentlyViewedProducts.vue')
+    },
+    {
+        path: '/event',
+        name: 'Event',
+        component: () => import('@/views/Event.vue')
     }
 ]
 const router = createRouter({

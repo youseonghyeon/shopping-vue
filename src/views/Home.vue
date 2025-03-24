@@ -7,7 +7,7 @@
     <!-- 선착순 이벤트 영역 -->
     <section class="event-section">
       <!-- Vue Router를 이용한 내부 링크 -->
-      <router-link to="/event/ticket/apply" class="event-banner-link">
+      <router-link to="/event" class="event-banner-link">
         <img
             src="@/assets/event-banner.png"
             alt="선착순 10,000 포인트 이벤트"
