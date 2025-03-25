@@ -50,6 +50,9 @@ export default {
       return "";
     }
   },
+  created() {
+    window.scrollTo(0, 0);
+  },
   methods: {
     async participate() {
       if (this.disableButton) return;
