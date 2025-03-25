@@ -13,7 +13,6 @@
             alt="선착순 10,000 포인트 이벤트"
             class="event-banner-image"
         />
-        <p class="event-banner-text">로그인하고 쿠폰 받기</p>
       </router-link>
     </section>
 

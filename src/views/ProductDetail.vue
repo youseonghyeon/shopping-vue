@@ -136,12 +136,12 @@ export default {
     },
     async addToCart() {
       try {
-        const response = await postRequest("/cart/create", {
+        await postRequest("/cart/create", {
           productId: this.product.id,
           quantity: this.quantity
         });
         eventBus.emit('update-cart-count', 1);
-        alert("장바구니에 담았습니다!");
+        confirm("장바구니에 담았습니다! 장바구니로 이동하시겠습니까?") && this.$router.push("/cart");
       } catch (error) {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           alert("로그인이 필요합니다.");
@@ -157,7 +157,7 @@ export default {
         let response = await postRequest(requestUrl, { productId: this.product.id });
         if (response.data.success) {
           this.isWished = !this.isWished;
-          alert(this.isWished ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다.");
+          // alert(this.isWished ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다.");
         }
       } catch (error) {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {

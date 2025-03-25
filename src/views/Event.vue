@@ -60,6 +60,10 @@ export default {
         this.serverStatus = success;
         this.serverMessage = message;
       } catch (error) {
+        if (error.response.status === 401 || error.response.status === 403) {
+          alert('로그인이 필요합니다.');
+          window.location.href = '/login';
+        }
         if (error.status === 400) {
           const { success, message } = error.response.data.errorDetails;
           this.serverStatus = success;

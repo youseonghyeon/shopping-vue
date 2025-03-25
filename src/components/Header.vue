@@ -18,7 +18,7 @@ export default {
       router.push('/category')
     }
     const goMain = () => {
-      router.push('/')
+      location.href = '/';
     }
     return {goCategory, goMain}
   }
