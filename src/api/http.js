@@ -7,7 +7,7 @@ let shoppingApiUrl = '/api';
 
 const http = axios.create({
     baseURL: shoppingApiUrl,
-    timeout: 5000,
+    timeout: 20000,
     withCredentials: true,
 })
 
